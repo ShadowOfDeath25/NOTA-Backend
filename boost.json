@@ -13,6 +13,8 @@
     "mcp": true,
     "sail": false,
     "skills": [
+        "scout-development",
+        "socialite-development",
         "pest-testing"
     ]
 }
