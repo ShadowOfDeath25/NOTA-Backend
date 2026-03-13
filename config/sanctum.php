@@ -64,6 +64,8 @@ return [
 
     'token_prefix' => env('SANCTUM_TOKEN_PREFIX', ''),
 
+    'prefix' => '/api',
+
     /*
     |--------------------------------------------------------------------------
     | Sanctum Middleware
@@ -74,7 +76,6 @@ return [
     | request. You may change the middleware listed below as required.
     |
     */
-
     'middleware' => [
         'authenticate_session' => Laravel\Sanctum\Http\Middleware\AuthenticateSession::class,
         'encrypt_cookies' => Illuminate\Cookie\Middleware\EncryptCookies::class,
