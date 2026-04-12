@@ -11,9 +11,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('spaces', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->unique();
+            $table->uuid('id')->primary();
             $table->string('name');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

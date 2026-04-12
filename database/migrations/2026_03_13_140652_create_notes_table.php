@@ -13,13 +13,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('notes', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->unique();
+            $table->uuid('id')->primary();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
-            $table->softDeletes();
             $table->foreignIdFor(Space::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->json('content');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

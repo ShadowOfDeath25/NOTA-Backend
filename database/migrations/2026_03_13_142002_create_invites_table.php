@@ -13,13 +13,13 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('invites', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->unique();
+            $table->uuid('id')->primary();
             $table->string('url');
             $table->foreignIdFor(Space::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->boolean('single_use');
             $table->timestamp('expires_at');
+            $table->softDeletes();
             $table->timestamps();
 
         });

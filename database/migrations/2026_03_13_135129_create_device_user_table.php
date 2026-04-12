@@ -13,10 +13,11 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('device_user', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignIdFor(Device::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->timestamp('last_login')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

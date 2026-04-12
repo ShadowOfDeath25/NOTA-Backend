@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->unique(['space_id', 'user_id']);
             $table->boolean('is_owner');
             $table->timestamp('joined_at');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

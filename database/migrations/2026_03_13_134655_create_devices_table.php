@@ -11,10 +11,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('devices', function (Blueprint $table) {
-            $table->id();
-            $table->uuid()->unique();
+            $table->uuid('id')->primary();
             $table->string('type');
             $table->string('token');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
