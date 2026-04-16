@@ -17,6 +17,7 @@
         "laravel-best-practices",
         "scout-development",
         "socialite-development",
-        "pest-testing"
+        "pest-testing",
+        "tailwindcss-development"
     ]
 }
