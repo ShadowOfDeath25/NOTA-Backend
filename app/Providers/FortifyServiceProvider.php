@@ -6,6 +6,11 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Contracts\Responses\LoginResponse;
+use App\Contracts\Responses\LogoutResponse;
+use App\Contracts\Responses\RegisterResponse;
+use App\Helpers\ClientDetector;
+use App\Services\AuthService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -21,7 +26,25 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(ClientDetector::class, function ($app) {
+            return new ClientDetector(request());
+        });
+
+        $this->app->singleton(AuthService::class, function ($app) {
+            return new AuthService($app->make(ClientDetector::class));
+        });
+
+        $this->app->singleton(LoginResponse::class, function ($app) {
+            return new LoginResponse($app->make(ClientDetector::class));
+        });
+
+        $this->app->singleton(LogoutResponse::class, function ($app) {
+            return new LogoutResponse($app->make(AuthService::class));
+        });
+
+        $this->app->singleton(RegisterResponse::class, function ($app) {
+            return new RegisterResponse($app->make(ClientDetector::class));
+        });
     }
 
     /**
@@ -34,6 +57,10 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
+
+        $this->app->bind(\Laravel\Fortify\Contracts\LoginResponse::class, LoginResponse::class);
+        $this->app->bind(\Laravel\Fortify\Contracts\LogoutResponse::class, LogoutResponse::class);
+        $this->app->bind(\Laravel\Fortify\Contracts\RegisterResponse::class, RegisterResponse::class);
 
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
