@@ -56,6 +56,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Frontend URL
+    |--------------------------------------------------------------------------
+    |
+    | This value is the URL of your frontend application, which will be used when
+    | generating password reset and email verification links in notifications.
+    |
+    */
+
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

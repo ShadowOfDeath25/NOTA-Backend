@@ -11,6 +11,8 @@ use App\Contracts\Responses\LogoutResponse;
 use App\Contracts\Responses\RegisterResponse;
 use App\Helpers\ClientDetector;
 use App\Services\AuthService;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -70,6 +72,18 @@ class FortifyServiceProvider extends ServiceProvider
 
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
+        });
+
+        VerifyEmail::createUrlUsing(function ($notifiable) {
+            $frontendUrl = config('app.frontend_url');
+
+            return $frontendUrl.'/verify-email/'.$notifiable->getKey().'/'.sha1($notifiable->getEmailForVerification());
+        });
+
+        ResetPassword::createUrlUsing(function ($notifiable, $token) {
+            $frontendUrl = config('app.frontend_url');
+
+            return $frontendUrl.'/reset-password?token='.$token.'&email='.$notifiable->getEmailForPasswordReset();
         });
     }
 }
