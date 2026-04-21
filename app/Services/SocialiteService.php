@@ -23,7 +23,7 @@ final class SocialiteService
 
     public function handleProviderCallback(string $provider): ?User
     {
-        $socialiteUser = Socialite::driver($provider)->user();
+        $socialiteUser = Socialite::driver($provider)->stateless()->user();
 
         return $this->findOrCreateUser($provider, $socialiteUser);
     }
