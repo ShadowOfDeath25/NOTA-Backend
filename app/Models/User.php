@@ -10,6 +10,10 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
+
+
+use App\Models\Space;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -50,5 +54,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    public function spaces(): BelongsToMany
+    {
+        return $this->belongsToMany(Space::class)->withPivot('is_owner', 'joined_at');
     }
 }

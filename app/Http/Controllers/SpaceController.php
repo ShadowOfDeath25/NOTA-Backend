@@ -2,64 +2,83 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreSpaceRequest;
+use App\Http\Requests\UpdateSpaceRequest;
 use App\Models\Space;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SpaceController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * List all spaces the authenticated user belongs to.
      */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        //
+        $spaces = $request->user()
+            ->spaces()
+            ->withCount('notes')
+            ->latest()
+            ->get();
+
+        return response()->json(['data' => $spaces]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Create a new space and attach the creator as owner.
      */
-    public function create()
+    public function store(StoreSpaceRequest $request): JsonResponse
     {
-        //
+        $space = Space::create($request->validated());
+
+        $space->users()->attach($request->user()->id, [
+            'is_owner'  => true,
+            'joined_at' => now(),
+        ]);
+
+        return response()->json(['data' => $space], 201);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Show a single space (only members may view).
      */
-    public function store(Request $request)
+    public function show(Request $request, Space $space): JsonResponse
     {
-        //
+        if (! $space->users()->where('user_id', $request->user()->id)->exists()) {
+            return response()->json(['message' => 'Not found.'], 404);
+        }
+
+        $space->loadCount('notes');
+
+        return response()->json(['data' => $space]);
     }
 
     /**
-     * Display the specified resource.
+     * Update the space (only the owner may update).
      */
-    public function show(Space $space)
+    public function update(UpdateSpaceRequest $request, Space $space): JsonResponse
     {
-        //
+        if (! $space->isOwnedBy($request->user())) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
+        $space->update($request->validated());
+
+        return response()->json(['data' => $space]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Delete the space (only the owner may delete).
      */
-    public function edit(Space $space)
+    public function destroy(Request $request, Space $space): JsonResponse
     {
-        //
-    }
+        if (! $space->isOwnedBy($request->user())) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Space $space)
-    {
-        //
-    }
+        $space->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Space $space)
-    {
-        //
+        return response()->json(['message' => 'Space deleted.']);
     }
 }
+

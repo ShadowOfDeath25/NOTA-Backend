@@ -16,4 +16,7 @@ class Note extends Model
         'deleted_at',
         'space_id',
     ];
+    protected $casts = [
+        'content' => 'array',
+    ];
 }

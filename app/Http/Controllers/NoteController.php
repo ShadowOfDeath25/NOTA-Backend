@@ -2,64 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreNoteRequest;
+use App\Http\Requests\UpdateNoteRequest;
 use App\Models\Note;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NoteController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * List all notes for the authenticated user.
+     * Optionally filter by ?space_id=uuid.
      */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        //
+        $notes = Note::query()
+            ->where('user_id', $request->user()->id)
+            ->when($request->query('space_id'), fn ($q, $spaceId) => $q->where('space_id', $spaceId))
+            ->latest()
+            ->get();
+
+        return response()->json(['data' => $notes]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Create a new note for the authenticated user.
      */
-    public function create()
+    public function store(StoreNoteRequest $request): JsonResponse
     {
-        //
+        $note = Note::create([
+            ...$request->validated(),
+            'user_id' => $request->user()->id,
+        ]);
+
+        return response()->json(['data' => $note], 201);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Show a single note (must belong to the authenticated user).
      */
-    public function store(Request $request)
+    public function show(Request $request, Note $note): JsonResponse
     {
-        //
+        if ($note->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Not found.'], 404);
+        }
+
+        return response()->json(['data' => $note]);
     }
 
     /**
-     * Display the specified resource.
+     * Update a note (must belong to the authenticated user).
      */
-    public function show(Note $note)
+    public function update(UpdateNoteRequest $request, Note $note): JsonResponse
     {
-        //
+        if ($note->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Not found.'], 404);
+        }
+
+        $note->update($request->validated());
+
+        return response()->json(['data' => $note]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Delete a note (must belong to the authenticated user).
      */
-    public function edit(Note $note)
+    public function destroy(Request $request, Note $note): JsonResponse
     {
-        //
-    }
+        if ($note->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Not found.'], 404);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Note $note)
-    {
-        //
-    }
+        $note->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Note $note)
-    {
-        //
+        return response()->json(['message' => 'Note deleted.']);
     }
 }
+
