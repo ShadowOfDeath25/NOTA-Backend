@@ -6,7 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -17,7 +18,7 @@ return new class extends Migration {
             $table->foreignIdFor(Space::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->unique(['space_id', 'user_id']);
-            $table->boolean('is_owner');
+            $table->string('role');
             $table->timestamp('joined_at');
             $table->softDeletes();
             $table->timestamps();
