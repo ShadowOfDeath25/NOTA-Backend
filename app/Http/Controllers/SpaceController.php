@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreSpaceRequest;
-use App\Http\Requests\UpdateSpaceRequest;
+use App\Enums\Role;
+use App\Http\Requests\Space\StoreSpaceRequest;
+use App\Http\Requests\Space\UpdateSpaceRequest;
 use App\Models\Space;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class SpaceController extends Controller
         $space = Space::create($request->validated());
 
         $space->users()->attach($request->user()->id, [
-            'is_owner'  => true,
+            'role' => Role::OWNER->value,
             'joined_at' => now(),
         ]);
 
@@ -54,14 +55,14 @@ class SpaceController extends Controller
     }
 
     /**
-     * Update the space (only the owner may update).
+     * Update the space (only the owner/admin may update).
      */
     public function update(UpdateSpaceRequest $request, Space $space): JsonResponse
     {
-        if (! $space->isOwnedBy($request->user())) {
-            return response()->json(['message' => 'Forbidden.'], 403);
+        $userRole = $space->userRole($request->user());
+        if (! contains([Role::OWNER, Role::ADMIN->value], $userRole)) {
+            abort(403, 'Forbidden');
         }
-
         $space->update($request->validated());
 
         return response()->json(['data' => $space]);
@@ -81,4 +82,3 @@ class SpaceController extends Controller
         return response()->json(['message' => 'Space deleted.']);
     }
 }
-

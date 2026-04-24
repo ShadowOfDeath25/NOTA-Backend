@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Space;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateNoteRequest extends FormRequest
+class StoreSpaceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,7 @@ class UpdateNoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'    => ['sometimes', 'required', 'string', 'max:255'],
-            'content'  => ['sometimes', 'required', 'array'],
-            'space_id' => ['sometimes', 'nullable', 'uuid', 'exists:spaces,id'],
+            'name' => ['required', 'string', 'max:255'],
         ];
     }
 }

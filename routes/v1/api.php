@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\SpaceController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -17,10 +19,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/revoke-other-tokens', [AuthController::class, 'revokeOtherTokens']);
     Route::post('/auth/confirm-password', [AuthController::class, 'confirmPassword']);
 
+    Route::apiResource('notes', NoteController::class);
+    Route::apiResource('spaces.notes', NoteController::class);
+    Route::apiResource('spaces', SpaceController::class);
     if (Features::twoFactorAuthentication()) {
         Route::get('/auth/two-factor/qr-code', [AuthController::class, 'getTwoFactorQrCode']);
         Route::get('/auth/two-factor/recovery-codes', [AuthController::class, 'getTwoFactorRecoveryCodes']);
         Route::post('/auth/two-factor/recovery-codes/regenerate', [AuthController::class, 'generateNewRecoveryCodes']);
     }
 });
-

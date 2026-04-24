@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Note extends Model
 {
@@ -16,7 +17,18 @@ class Note extends Model
         'deleted_at',
         'space_id',
     ];
+
     protected $casts = [
         'content' => 'array',
     ];
+
+    public function space(): BelongsTo
+    {
+        $this->belongsTo(Space::class);
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }
