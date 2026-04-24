@@ -24,7 +24,7 @@ class Note extends Model
 
     public function space(): BelongsTo
     {
-        $this->belongsTo(Space::class);
+       return $this->belongsTo(Space::class);
     }
 
     public function owner(): BelongsTo
