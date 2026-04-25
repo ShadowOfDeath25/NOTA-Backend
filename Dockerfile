@@ -1,31 +1,30 @@
-FROM dunglas/frankenphp:php8.4-bookworm AS builder
-
-ARG APP_ENV=production
+FROM php:8.4-cli-bookworm AS builder
 
 WORKDIR /var/www/html
 
 COPY composer.json composer.lock ./
 
+RUN apt-get update && apt-get install -y curl unzip && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 COPY package.json package-lock.json ./
-RUN npm ci
-
 COPY vite.config.js ./
 COPY resources/ ./resources/
 
-RUN npm run build
+RUN apt-get update && apt-get install -y nodejs npm && \
+    npm ci && \
+    npm run build
 
 FROM dunglas/frankenphp:php8.4-bookworm
 
-ARG APP_ENV=production
-ENV APP_ENV=${APP_ENV}
+ENV APP_ENV=production
 
 WORKDIR /var/www/html
 
 COPY --from=builder /var/www/html/vendor ./vendor
 COPY --from=builder /var/www/html/public/build ./public/build
-COPY --from=builder /var/www/html/node_modules/.vite ./node_modules/.vite
 
 COPY . .
 
