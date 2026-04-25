@@ -1,4 +1,4 @@
-FROM ghcr.io/cadvisor/inbound:php8.4 AS builder
+FROM dunglas/frankenphp:php8.4-bookworm AS builder
 
 ARG APP_ENV=production
 
@@ -16,7 +16,7 @@ COPY resources/ ./resources/
 
 RUN npm run build
 
-FROM ghcr.io/cadvisor/inbound:php8.4
+FROM dunglas/frankenphp:php8.4-bookworm
 
 ARG APP_ENV=production
 ENV APP_ENV=${APP_ENV}
