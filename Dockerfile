@@ -49,4 +49,4 @@ RUN cp .env.example .env && \
     php artisan key:generate
 
 EXPOSE 8080
-ENTRYPOINT ["frankenphp", "entrance"]
+CMD ["php", "artisan", "octane:serve"]
