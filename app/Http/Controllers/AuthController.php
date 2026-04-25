@@ -10,15 +10,17 @@ use Illuminate\Http\Request;
 class AuthController extends Controller
 {
     public function __construct(
-        private readonly AuthService $authService,
+        private readonly AuthService    $authService,
         private readonly ClientDetector $clientDetector
-    ) {}
+    )
+    {
+    }
 
     public function user(Request $request): JsonResponse
     {
         $user = $this->authService->getAuthenticatedUser($request);
 
-        if (! $user) {
+        if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
@@ -41,7 +43,7 @@ class AuthController extends Controller
         if ($this->clientDetector->isMobile()) {
             $user = $request->user();
 
-            if (! $user) {
+            if (!$user) {
                 return response()->json(['message' => 'Unauthenticated'], 401);
             }
 
@@ -62,7 +64,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! $user) {
+        if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
@@ -82,7 +84,7 @@ class AuthController extends Controller
         if ($this->clientDetector->isMobile()) {
             $user = $request->user();
 
-            if (! $user) {
+            if (!$user) {
                 return response()->json(['message' => 'Unauthenticated'], 401);
             }
 
@@ -114,11 +116,11 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! $user) {
+        if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
-        if (! $user->two_factor_confirmed_at) {
+        if (!$user->two_factor_confirmed_at) {
             return response()->json(['message' => 'Two-factor authentication not enabled'], 400);
         }
 
@@ -132,7 +134,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! $user) {
+        if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
@@ -147,7 +149,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! $user) {
+        if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
