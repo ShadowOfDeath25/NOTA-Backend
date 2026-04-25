@@ -2,8 +2,6 @@ FROM php:8.4-cli-bookworm AS builder
 
 WORKDIR /var/www/html
 
-COPY composer.json composer.lock artisan bootstrap/ ./
-
 RUN apt-get update && apt-get install -y \
     curl \
     unzip \
@@ -23,10 +21,12 @@ RUN apt-get update && apt-get install -y \
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
-COPY package.json package-lock.json vite.config.js ./
-COPY resources/ ./resources/
+COPY . .
+
+RUN php artisan package:discover --ansi
 
 RUN npm ci && npm run build
 
