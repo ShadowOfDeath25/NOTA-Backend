@@ -49,4 +49,4 @@ RUN cp .env.example .env && \
     php artisan key:generate
 
 EXPOSE 8080
-CMD ["php", "artisan", "octane:start"]
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "./public"]
