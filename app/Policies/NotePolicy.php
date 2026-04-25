@@ -37,6 +37,7 @@ class NotePolicy
     /**
      * Determine whether the user can update the model.
      */
+
     public function update(User $user, Note $note, ?Space $space = null): bool
     {
         return $space ? in_array([Role::ADMIN->value, Role::OWNER->value, Role::EDITOR->value], $space->userRole($user)) : $note->user_id === $user->id;
