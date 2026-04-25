@@ -46,10 +46,7 @@ COPY --from=builder /var/www/html/public/build ./public/build
 COPY . .
 
 RUN cp .env.example .env && \
-    php artisan key:generate && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+    php artisan key:generate
 
 EXPOSE 8080
 ENTRYPOINT ["frankenphp", "entrance"]
