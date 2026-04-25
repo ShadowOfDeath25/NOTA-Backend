@@ -2,6 +2,8 @@ FROM php:8.4-cli-bookworm AS builder
 
 WORKDIR /var/www/html
 
+COPY composer.json composer.lock artisan bootstrap/ ./
+
 RUN apt-get update && apt-get install -y \
     curl \
     unzip \
@@ -16,21 +18,17 @@ RUN apt-get update && apt-get install -y \
     libsqlite3-dev \
     && pecl install zip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql pdo_sqlite zip gd intl
-
-COPY composer.json composer.lock ./
+    && docker-php-ext-install pdo pdo_mysql pdo_sqlite zip gd intl \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-COPY package.json package-lock.json ./
-COPY vite.config.js ./
+COPY package.json package-lock.json vite.config.js ./
 COPY resources/ ./resources/
 
-RUN apt-get update && apt-get install -y nodejs npm && \
-    npm ci && \
-    npm run build
+RUN npm ci && npm run build
 
 FROM dunglas/frankenphp:php8.4-bookworm
 
