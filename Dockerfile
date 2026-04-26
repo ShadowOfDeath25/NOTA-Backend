@@ -45,11 +45,9 @@ COPY --from=builder /var/www/html/public/build ./public/build
 
 COPY . .
 
-RUN cp .env.example .env && \
-    php artisan key:generate && \
-    mkdir  -m 775 storage/framework/sessions && \
-    mkdir  -m 775 storage/framework/views && \
-    mkdir  -m 775 storage/framework/cache && \
+RUN cp .env.example .env
+RUN php artisan key:generate
+RUN mkdir -p -m 775 storage/framework/sessions storage/framework/views storage/framework/cache
 
 EXPOSE 8000
 CMD ["php", "-S", "0.0.0.0:8000", "-t", "./public"]
