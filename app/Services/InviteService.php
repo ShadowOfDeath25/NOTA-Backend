@@ -13,20 +13,21 @@ use Illuminate\Support\Facades\DB;
 
 class InviteService
 {
-    public function create(Space $space, User $user,bool $singleUse ): Invite
+    public function create(Space $space, User $user ): Invite
     {
         return Invite::create([
             'url' => Invite::generateUrl(),
          //   'single_use' => $singleUse,
             'space_id' => $space->id,
             'user_id' => $user->id,
+            'expires_at' => now()->addDays(3),
         ]);
     }
 
 
     public function accept(string $url, User $user): Space
     {
-        // i don know what TF with transaction till now
+        // I don't know what TF with transaction till now
         return DB::transaction(function () use ($url, $user) {
             $invite = Invite::withTrashed()
                 ->where('url', $url)
