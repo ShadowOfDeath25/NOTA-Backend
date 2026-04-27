@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Invite extends Model
 {
-    use HasUuids;
+    use HasUuids, softDeletes;
 
     protected $fillable = [
         'url',
@@ -37,7 +38,6 @@ class Invite extends Model
     {
         return $this->belongsTo(User::class);
     }
-    // Domain Helpers
     public static function generateUrl(): string
     {
         return Str::random(64);
@@ -56,9 +56,9 @@ class Invite extends Model
 //    }
     public function consume(): void
     {
-        if ($this->single_use) {
+        //if ($this->single_use) {
             $this->delete();
-        }
+       // }
     }
     public function scopeValid($query): void
     {
