@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
 {
@@ -34,9 +35,8 @@ class RegisterRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class),
             ],
-            'password' => CreateNewUser::passwordRules(),
-            'gender' => ['string', 'in:male,female'],
-            'phone_number' => ['string', 'numeric', 'max:15'],
+            'password' => ['required', 'string', Password::default(), 'confirmed'],
+
         ];
     }
 }
