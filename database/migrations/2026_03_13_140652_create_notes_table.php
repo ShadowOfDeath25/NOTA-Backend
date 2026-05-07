@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Space::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('title');
-            $table->json('content');
+            $table->binary('content')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

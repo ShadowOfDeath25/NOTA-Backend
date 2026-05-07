@@ -38,11 +38,15 @@ class NoteController extends Controller
     #[Authorize('create', [Note::class, 'space'])]
     public function store(StoreNoteRequest $request, ?Space $space = null): JsonResponse
     {
-
+        $data = $request->validated();
+        if (!isset($data["title"])) {
+            $data["title"] = "Untitled";
+        }
         $note = Note::create([
-            ...$request->validated(),
+            ...$data,
             'user_id' => $request->user()->id,
         ]);
+
 
         return response()->json(['data' => $note], 201);
     }
@@ -67,8 +71,10 @@ class NoteController extends Controller
         if ($note->user_id !== $request->user()->id) {
             return response()->json(['message' => 'Not found.'], 404);
         }
+        $data = $request->validated();
+        $data["content"] = base64_decode($data["content"], strict: true);
 
-        $note->update($request->validated());
+        $note->update($data);
 
         return response()->json(['data' => $note]);
     }

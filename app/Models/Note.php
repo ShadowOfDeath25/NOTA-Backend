@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Base64;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,12 +20,12 @@ class Note extends Model
     ];
 
     protected $casts = [
-        'content' => 'array',
+        'content' => Base64::class,
     ];
 
     public function space(): BelongsTo
     {
-       return $this->belongsTo(Space::class);
+        return $this->belongsTo(Space::class);
     }
 
     public function owner(): BelongsTo
