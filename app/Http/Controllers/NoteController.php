@@ -57,7 +57,7 @@ class NoteController extends Controller
     public function show(Request $request, Note $note): JsonResponse
     {
         if ($note->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Not found.'], 404);
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
 
         return response()->json(['data' => $note]);
@@ -72,7 +72,7 @@ class NoteController extends Controller
             return response()->json(['message' => 'Not found.'], 404);
         }
         $data = $request->validated();
-        $data["content"] = base64_decode($data["content"], strict: true);
+
 
         $note->update($data);
 
