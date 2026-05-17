@@ -21,6 +21,6 @@ jobs:
           script: |
             cd /home/ubuntu/NOTA-Backend
             git pull
-            cd /home/ubuntu/NOTA-Backend/collab-server  # Or your specific setup command
+            cd /home/ubuntu/NOTA-Backend/collab-server
             npm install
             sudo systemctl restart nota-*
