@@ -3,7 +3,7 @@ name: Push to EC2
 on:
   push:
     branches:
-      - master  # Deployment triggers only when you push to main
+      - master  
 
 jobs:
   deploy:
@@ -19,8 +19,13 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ubuntu/NOTA-Backend
+            cd /home/***/NOTA-Backend
             git pull
-            cd /home/ubuntu/NOTA-Backend/collab-server
-            /home/ubuntu/.nvm/versions/node/v24.15.0/bin/npm install
+
+            export NVM_DIR="$HOME/.nvm"
+            source "$NVM_DIR/nvm.sh"
+
+            cd /home/***/NOTA-Backend/collab-server
+            npm install
+
             sudo systemctl restart nota-*
