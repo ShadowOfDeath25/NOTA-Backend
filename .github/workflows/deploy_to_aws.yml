@@ -20,7 +20,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/NOTA-Backend
-            git pull origin master
+            git pull
             cd /home/ubuntu/NOTA-Backend/collab-server  # Or your specific setup command
             npm install
             sudo systemctl restart nota-*
