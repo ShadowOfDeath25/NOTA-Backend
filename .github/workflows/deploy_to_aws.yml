@@ -22,5 +22,5 @@ jobs:
             cd /home/ubuntu/NOTA-Backend
             git pull
             cd /home/ubuntu/NOTA-Backend/collab-server
-            npm install
+            /home/ubuntu/.nvm/versions/node/v24.15.0/bin/npm install
             sudo systemctl restart nota-*
