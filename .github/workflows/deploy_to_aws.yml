@@ -1,0 +1,26 @@
+name: Push to EC2
+
+on:
+  push:
+    branches:
+      - main  # Deployment triggers only when you push to main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/NOTA-Backend
+            git pull origin main
+            cd /home/ubuntu/NOTA-Backend/collab-server  # Or your specific setup command
+            npm install
+            sudo systemctl restart nota-*
