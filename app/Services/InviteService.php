@@ -13,17 +13,16 @@ use Illuminate\Support\Facades\DB;
 
 class InviteService
 {
-    public function create(Space $space, User $user ): Invite
+    public function create(Space $space, User $user): Invite
     {
         return Invite::create([
             'url' => Invite::generateUrl(),
-         //   'single_use' => $singleUse,
+            //   'single_use' => $singleUse,
             'space_id' => $space->id,
             'user_id' => $user->id,
             'expires_at' => now()->addDays(3),
         ]);
     }
-
 
     public function accept(string $url, User $user): Space
     {
@@ -35,14 +34,14 @@ class InviteService
                 ->firstOrFail();
 
             if ($invite->isUsed()) {
-                throw new  InviteAlreadyUsedException();
+                throw new InviteAlreadyUsedException;
             }
             if ($invite->isExpired()) {
-                throw new InviteExpiredException();
+                throw new InviteExpiredException;
             }
             $space = $invite->space;
             if ($space->hasMember($user)) {
-                throw new AlreadySpaceMemberException();
+                throw new AlreadySpaceMemberException;
             }
 
             $space->users()->attach($user->id, [
@@ -51,11 +50,13 @@ class InviteService
             ]);
 
             $invite->consume();
+
             return $space;
         });
     }
-     public function revokeAllForSpace(Space $space): int
-     {
-         return Invite::where('space_id', $space->id)->delete();
-     }
+
+    public function revokeAllForSpace(Space $space): int
+    {
+        return Invite::where('space_id', $space->id)->delete();
+    }
 }

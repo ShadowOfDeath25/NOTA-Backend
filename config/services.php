@@ -20,7 +20,7 @@ return [
 
     'openRouter' => [
         'key' => env('OPEN_ROUTER_API_KEY'),
-        'model' => env('OPEN_ROUTER_MODEL')
+        'model' => env('OPEN_ROUTER_MODEL'),
     ],
 
     'resend' => [

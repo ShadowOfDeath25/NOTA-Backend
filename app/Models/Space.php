@@ -19,10 +19,10 @@ class Space extends Model
         'name',
     ];
 
-//    public function users(): BelongsToMany
-//    {
-//        return $this->belongsToMany(User::class)->withPivot('role', 'joined_at');
-//    }
+    //    public function users(): BelongsToMany
+    //    {
+    //        return $this->belongsToMany(User::class)->withPivot('role', 'joined_at');
+    //    }
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)
@@ -30,19 +30,20 @@ class Space extends Model
             ->withTimestamps()
             ->wherePivotNull('deleted_at');
     }
+
     public function hasMember(User $user): bool
     {
         return $this->users()->where('user_id', $user->id)->exists();
     }
 
-    //Only OWNER or ADMIN roles can create invite links
+    // Only OWNER or ADMIN roles can create invite links
     public function userIsAdmin(User $user): bool
     {
         return $this->users()
-            ->wherePivot('user_id',$user->id)
-            ->wherePivot('role',[
+            ->wherePivot('user_id', $user->id)
+            ->wherePivot('role', [
                 Role::ADMIN->value,
-                Role::OWNER->value
+                Role::OWNER->value,
             ])
             ->exists();
     }
@@ -51,10 +52,12 @@ class Space extends Model
     {
         return $this->hasMany(Note::class);
     }
+
     public function invites()
     {
         return $this->hasMany(Invite::class);
     }
+
     public function userRole(User $user)
     {
         return SpaceUser::where('user_id', $user->id)->first()->role;

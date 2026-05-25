@@ -81,14 +81,7 @@ final class ClientDetector
 
     private function getStatefulDomains(): array
     {
-        $domains = config('sanctum.stateful', []);
-        $envDomains = env('SANCTUM_STATEFUL_DOMAINS', '');
-
-        if ($envDomains) {
-            $domains = array_merge($domains, explode(',', $envDomains));
-        }
-
-        return array_filter(array_unique($domains));
+        return array_filter(array_unique(config('sanctum.stateful', [])));
     }
 
     private function normalizeDomain(string $domain): string

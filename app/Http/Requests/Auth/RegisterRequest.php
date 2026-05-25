@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Actions\Fortify\CreateNewUser;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;

@@ -15,10 +15,10 @@ class SpaceResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->id,
-            'name'       => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'created_at' => $this->created_at->toISOString(),
-            'users'    => UserResource::collection($this->whenLoaded('users')),
+            'users' => UserResource::collection($this->whenLoaded('users')),
         ];
     }
 }

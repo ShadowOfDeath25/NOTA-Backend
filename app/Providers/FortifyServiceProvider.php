@@ -9,8 +9,6 @@ use App\Actions\Fortify\UpdateUserProfileInformation;
 use App\Contracts\Responses\LoginResponse;
 use App\Contracts\Responses\LogoutResponse;
 use App\Contracts\Responses\RegisterResponse;
-use App\Helpers\ClientDetector;
-use App\Services\AuthService;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -29,26 +27,6 @@ class FortifyServiceProvider extends ServiceProvider
     public function register(): void
     {
         Fortify::ignoreRoutes();
-
-        $this->app->singleton(ClientDetector::class, function ($app) {
-            return new ClientDetector(request());
-        });
-
-        $this->app->singleton(AuthService::class, function ($app) {
-            return new AuthService($app->make(ClientDetector::class));
-        });
-
-        $this->app->singleton(LoginResponse::class, function ($app) {
-            return new LoginResponse($app->make(ClientDetector::class));
-        });
-
-        $this->app->singleton(LogoutResponse::class, function ($app) {
-            return new LogoutResponse($app->make(AuthService::class));
-        });
-
-        $this->app->singleton(RegisterResponse::class, function ($app) {
-            return new RegisterResponse($app->make(ClientDetector::class));
-        });
     }
 
     /**
@@ -67,7 +45,7 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->bind(\Laravel\Fortify\Contracts\RegisterResponse::class, RegisterResponse::class);
 
         RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
+            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 
             return Limit::perMinute(5)->by($throttleKey);
         });
@@ -79,13 +57,13 @@ class FortifyServiceProvider extends ServiceProvider
         VerifyEmail::createUrlUsing(function ($notifiable) {
             $frontendUrl = config('app.frontend_url');
 
-            return $frontendUrl . '/verify-email/' . $notifiable->getKey() . '/' . sha1($notifiable->getEmailForVerification());
+            return $frontendUrl.'/verify-email/'.$notifiable->getKey().'/'.sha1($notifiable->getEmailForVerification());
         });
 
         ResetPassword::createUrlUsing(function ($notifiable, $token) {
             $frontendUrl = config('app.frontend_url');
 
-            return $frontendUrl . '/reset-password?token=' . $token . '&email=' . $notifiable->getEmailForPasswordReset();
+            return $frontendUrl.'/reset-password?token='.$token.'&email='.$notifiable->getEmailForPasswordReset();
         });
     }
 }

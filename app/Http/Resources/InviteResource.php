@@ -16,7 +16,7 @@ class InviteResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'invite_url' => url('/join/' . $this->url),
+            'invite_url' => url('/join/'.$this->url),
             'is_expired' => $this->isExpired(),
             'space_id' => $this->space_id,
         ];

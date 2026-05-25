@@ -53,7 +53,7 @@ class SocialAuthController extends Controller
                     ], 401);
                 }
 
-                $frontendUrl = config('app.frontend_url', env('FRONTEND_URL', 'http://localhost:5173'));
+                $frontendUrl = config('app.frontend_url');
 
                 return redirect("{$frontendUrl}/login?error=auth_failed");
             }
@@ -70,7 +70,7 @@ class SocialAuthController extends Controller
 
             $this->socialiteService->loginUser($user);
 
-            $frontendUrl = config('app.frontend_url', env('FRONTEND_URL', 'http://localhost:5173'));
+            $frontendUrl = config('app.frontend_url');
 
             return redirect("{$frontendUrl}/dashboard?provider={$provider}");
         } catch (Throwable $e) {
@@ -81,7 +81,7 @@ class SocialAuthController extends Controller
                 ], 500);
             }
 
-            $frontendUrl = config('app.frontend_url', env('FRONTEND_URL', 'http://localhost:5173'));
+            $frontendUrl = config('app.frontend_url');
 
             return redirect("{$frontendUrl}/login?error=".urlencode($e->getMessage()));
         }

@@ -1,5 +1,10 @@
 <?php
 
+use App\Contracts\Responses\LoginResponse;
+use App\Contracts\Responses\LogoutResponse;
+use App\Contracts\Responses\RegisterResponse;
+use App\Helpers\ClientDetector;
+use App\Services\AuthService;
 use Laravel\Octane\Contracts\OperationTerminated;
 use Laravel\Octane\Events\RequestHandled;
 use Laravel\Octane\Events\RequestReceived;
@@ -135,7 +140,11 @@ return [
     ],
 
     'flush' => [
-        //
+        ClientDetector::class,
+        AuthService::class,
+        LoginResponse::class,
+        LogoutResponse::class,
+        RegisterResponse::class,
     ],
 
     /*

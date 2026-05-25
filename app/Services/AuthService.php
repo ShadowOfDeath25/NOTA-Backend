@@ -36,8 +36,6 @@ final class AuthService
         return $this->clientDetector->isMobile();
     }
 
-
-
     public function logout(Request $request): void
     {
         if ($this->isAuthenticatedViaToken()) {
@@ -48,6 +46,4 @@ final class AuthService
             $request->session()->regenerateToken();
         }
     }
-
-
 }

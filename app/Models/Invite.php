@@ -28,42 +28,46 @@ class Invite extends Model
         ];
     }
 
-
     public function space(): BelongsTo
     {
         return $this->belongsTo(Space::class);
     }
+
     // I don't know if this will be needed but anyway
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
+
     public static function generateUrl(): string
     {
         return Str::random(64);
     }
+
     public function isExpired(): bool
     {
         return $this->expires_at->isPast();
     }
+
     public function isUsed(): bool
     {
         return $this->trashed();
     }
-//    public function isSingleUse(): bool
-//    {
-//        return $this->single_use;
-//    }
+
+    //    public function isSingleUse(): bool
+    //    {
+    //        return $this->single_use;
+    //    }
     public function consume(): void
     {
-        //if ($this->single_use) {
-            $this->delete();
-       // }
+        // if ($this->single_use) {
+        $this->delete();
+        // }
     }
+
     public function scopeValid($query): void
     {
         $query->whereNull('deleted_at')
-              ->where('expires_at', '>', now());
+            ->where('expires_at', '>', now());
     }
-
 }
