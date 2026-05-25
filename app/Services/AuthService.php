@@ -36,10 +36,7 @@ final class AuthService
         return $this->clientDetector->isMobile();
     }
 
-    public function isAuthenticatedViaSession(): bool
-    {
-        return $this->clientDetector->isSPA();
-    }
+
 
     public function logout(Request $request): void
     {
