@@ -49,8 +49,5 @@ final class AuthService
         }
     }
 
-    public function getAuthenticatedUser(Request $request): ?User
-    {
-        return $request->user();
-    }
+
 }
