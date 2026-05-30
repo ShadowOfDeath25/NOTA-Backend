@@ -55,6 +55,6 @@ class User extends Authenticatable
 
     public function spaces(): BelongsToMany
     {
-        return $this->belongsToMany(Space::class)->withPivot('is_owner', 'joined_at');
+        return $this->belongsToMany(Space::class)->withPivot('role', 'joined_at');
     }
 }
