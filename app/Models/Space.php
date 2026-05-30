@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Role;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+
 // مش عارف صح ولا لا
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,7 +16,7 @@ class Space extends Model
     use HasUuids;
 
     protected $fillable = [
-
+        'description',
         'name',
     ];
 

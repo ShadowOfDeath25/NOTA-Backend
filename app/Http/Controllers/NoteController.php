@@ -38,9 +38,13 @@ class NoteController extends Controller
     #[Authorize('create', [Note::class, 'space'])]
     public function store(StoreNoteRequest $request, ?Space $space = null): JsonResponse
     {
+
         $data = $request->validated();
-        if (! isset($data['title'])) {
+        if (!isset($data['title'])) {
             $data['title'] = 'Untitled';
+        }
+        if ($space) {
+            $data['space_id'] = $space->id;
         }
         $note = Note::create([
             ...$data,

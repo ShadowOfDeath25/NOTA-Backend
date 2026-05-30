@@ -23,6 +23,7 @@ const getXsrfToken = (headers) => {
 
 const saveDocument = async (noteId, document, headers) => {
     const update = Y.encodeStateAsUpdate(document);
+    //Todo: save preview text
     const base64 = Buffer.from(update).toString("base64");
 
     const xsrfToken = getXsrfToken(headers);
@@ -34,7 +35,7 @@ const saveDocument = async (noteId, document, headers) => {
             {
                 headers: {
                     ...headers,
-                    "X-XSRF-TOKEN": decodeURIComponent(xsrfToken), // Laravel URL-encodes it
+                    "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
                 },
                 withCredentials: true,
             }

@@ -14,6 +14,7 @@ class Note extends Model
     protected $fillable = [
         'title',
         'content',
+        'preview',
         'user_id',
         'deleted_at',
         'space_id',

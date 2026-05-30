@@ -26,6 +26,7 @@ class UpdateNoteRequest extends FormRequest
             'title' => ['sometimes', 'required', 'string', 'max:255'],
             'content' => ['sometimes', 'required', 'string'],
             'space_id' => ['sometimes', 'nullable', 'uuid', 'exists:spaces,id'],
+            'preview' => ['sometimes', 'string']
         ];
     }
 }
