@@ -24,6 +24,7 @@ class UpdateSpaceRequest extends FormRequest
     {
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'description' => ['string', 'sometimes']
         ];
     }
 }

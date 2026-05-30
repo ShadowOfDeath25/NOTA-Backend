@@ -45,7 +45,7 @@ class SpaceController extends Controller
      */
     public function show(Request $request, Space $space): JsonResponse
     {
-        if (! $space->users()->where('user_id', $request->user()->id)->exists()) {
+        if (!$space->users()->where('user_id', $request->user()->id)->exists()) {
             return response()->json(['message' => 'Not found.'], 404);
         }
 
@@ -59,8 +59,10 @@ class SpaceController extends Controller
      */
     public function update(UpdateSpaceRequest $request, Space $space): JsonResponse
     {
+
         $userRole = $space->userRole($request->user());
-        if (! contains([Role::OWNER, Role::ADMIN->value], $userRole)) {
+
+        if (!in_array($userRole, [Role::OWNER->value, Role::ADMIN->value])) {
             abort(403, 'Forbidden');
         }
         $space->update($request->validated());
@@ -73,12 +75,10 @@ class SpaceController extends Controller
      */
     public function destroy(Request $request, Space $space): JsonResponse
     {
-        if (! $space->isOwnedBy($request->user())) {
+        if (!$space->userRole($request->user()) == Role::ADMIN->value) {
             return response()->json(['message' => 'Forbidden.'], 403);
         }
-
         $space->delete();
-
         return response()->json(['message' => 'Space deleted.']);
     }
 }
