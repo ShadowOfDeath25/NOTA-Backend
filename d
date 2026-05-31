@@ -1,0 +1,21 @@
+[90m= [39m[
+    [34m"[39m[34mdriver[39m[34m"[39m => [32m"[39m[32mcookie[39m[32m"[39m,
+    [34m"[39m[34mlifetime[39m[34m"[39m => [35m120[39m,
+    [34m"[39m[34mexpire_on_close[39m[34m"[39m => [36mfalse[39m,
+    [34m"[39m[34mencrypt[39m[34m"[39m => [36mfalse[39m,
+    [34m"[39m[34mfiles[39m[34m"[39m => [32m"[39m[32m/home/abdelrahman/projects/NOTA-Backend/storage/framework/sessions[39m[32m"[39m,
+    [34m"[39m[34mconnection[39m[34m"[39m => [36mnull[39m,
+    [34m"[39m[34mtable[39m[34m"[39m => [32m"[39m[32msessions[39m[32m"[39m,
+    [34m"[39m[34mstore[39m[34m"[39m => [36mnull[39m,
+    [34m"[39m[34mlottery[39m[34m"[39m => [
+      [35m2[39m,
+      [35m100[39m,
+    ],
+    [34m"[39m[34mcookie[39m[34m"[39m => [32m"[39m[32mnota-session[39m[32m"[39m,
+    [34m"[39m[34mpath[39m[34m"[39m => [32m"[39m[32m/[39m[32m"[39m,
+    [34m"[39m[34mdomain[39m[34m"[39m => [36mnull[39m,
+    [34m"[39m[34msecure[39m[34m"[39m => [36mfalse[39m,
+    [34m"[39m[34mhttp_only[39m[34m"[39m => [36mtrue[39m,
+    [34m"[39m[34msame_site[39m[34m"[39m => [32m"[39m[32mlax[39m[32m"[39m,
+    [34m"[39m[34mpartitioned[39m[34m"[39m => [36mfalse[39m,
+  ]
