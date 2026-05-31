@@ -40,7 +40,7 @@ class NoteController extends Controller
     {
 
         $data = $request->validated();
-        if (!isset($data['title'])) {
+        if (! isset($data['title'])) {
             $data['title'] = 'Untitled';
         }
         if ($space) {

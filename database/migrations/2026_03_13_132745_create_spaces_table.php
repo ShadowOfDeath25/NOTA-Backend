@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('spaces', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
