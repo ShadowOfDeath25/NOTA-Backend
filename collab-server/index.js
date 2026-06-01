@@ -1,12 +1,19 @@
-import { Server } from "@hocuspocus/server";
+import {Server} from "@hocuspocus/server";
 import * as Y from "yjs";
 import axios from "axios";
 import * as cookie from "cookie";
+import 'dotenv/config'
 
-const API_BASE_URL = "https://synopsis-cursive-ethics.ngrok-free.dev/api"
+
+const API_BASE_URL = process.env.API_BASE_URL;
+console.log(API_BASE_URL)
 const debounceMap = new Map();
-const documentHeaders = new Map(); // per-document headers, not a global
+const documentHeaders = new Map();
 const parseHeaders = (requestHeaders) => {
+
+    if (typeof requestHeaders?.entries === 'function') {
+        return Object.fromEntries(requestHeaders.entries());
+    }
     return Object.fromEntries(
         Object.entries(requestHeaders).map(([k, v]) => [k, Array.isArray(v) ? v[0] : v])
     );
@@ -14,12 +21,13 @@ const parseHeaders = (requestHeaders) => {
 
 const getXsrfToken = (headers) => {
     try {
-        const raw = headers["cookie"] || "";
+        const raw = headers.cookie || "";
         return cookie.parse(raw)["XSRF-TOKEN"] || "";
     } catch {
         return "";
     }
 };
+
 
 const saveDocument = async (noteId, document, headers) => {
     const update = Y.encodeStateAsUpdate(document);
@@ -31,7 +39,7 @@ const saveDocument = async (noteId, document, headers) => {
     try {
         const response = await axios.put(
             `${API_BASE_URL}/v1/notes/${noteId}`,
-            { content: base64 },
+            {content: base64},
             {
                 headers: {
                     ...headers,
@@ -51,15 +59,15 @@ const server = new Server({
 
     async onConnect(data) {
         console.log("[connect] client connected, doc:", data.documentName);
-        // Store headers per document on connect
-        const headers = parseHeaders(data.request.headers);
+        const headers = parseHeaders(data.requestHeaders);
         documentHeaders.set(data.documentName, headers);
-        console.log("[connect] cookies received:", headers["cookie"] ? "yes" : "NO COOKIES");
+        console.log("[connect] cookies received:", headers.cookie ? "yes" : "NO COOKIES");
     },
 
     async onDisconnect(data) {
         const noteId = data.documentName;
         const headers = documentHeaders.get(noteId) || {};
+
 
         if (debounceMap.has(noteId)) {
             clearTimeout(debounceMap.get(noteId));
@@ -74,8 +82,7 @@ const server = new Server({
         const headers = parseHeaders(data.requestHeaders);
         documentHeaders.set(data.documentName, headers);
 
-        console.log("[load] headers:", headers);
-        console.log("[load] cookie:", headers["cookie"] || "MISSING");
+        console.log("[load] cookie:", headers.cookie ? "yes" : "MISSING");
 
         try {
             const response = await axios.get(
