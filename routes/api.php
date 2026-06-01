@@ -9,5 +9,6 @@ Route::prefix('v1')->group(function () {
 
 Route::prefix('auth/social')->group(function () {
     Route::get('/{provider}/redirect', [SocialAuthController::class, 'redirect']);
-    Route::get('/{provider}/callback', [SocialAuthController::class, 'callback']);
+    Route::get('/{provider}/callback', [SocialAuthController::class, 'callback'])
+        ->middleware('web');
 });

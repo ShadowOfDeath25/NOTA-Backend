@@ -72,7 +72,7 @@ class SocialAuthController extends Controller
 
             $frontendUrl = config('app.frontend_url');
 
-            return redirect("{$frontendUrl}/dashboard?provider={$provider}");
+            return redirect("{$frontendUrl}/?provider={$provider}");
         } catch (Throwable $e) {
             if (request()->expectsJson()) {
                 return response()->json([
