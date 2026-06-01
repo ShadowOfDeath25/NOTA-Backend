@@ -31,7 +31,14 @@ const getXsrfToken = (headers) => {
 
 const saveDocument = async (noteId, document, headers) => {
     const update = Y.encodeStateAsUpdate(document);
-    //Todo: save preview text
+
+    const previewText = document
+        .getText("")
+        .toString()
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 200);
+
     const base64 = Buffer.from(update).toString("base64");
 
     const xsrfToken = getXsrfToken(headers);
@@ -39,7 +46,10 @@ const saveDocument = async (noteId, document, headers) => {
     try {
         const response = await axios.put(
             `${API_BASE_URL}/v1/notes/${noteId}`,
-            {content: base64},
+            {
+                content: base64,
+                preview: previewText
+            },
             {
                 headers: {
                     ...headers,
@@ -82,6 +92,8 @@ const server = new Server({
         const headers = parseHeaders(data.requestHeaders);
         documentHeaders.set(data.documentName, headers);
 
+
+
         console.log("[load] cookie:", headers.cookie ? "yes" : "MISSING");
 
         try {
@@ -107,6 +119,7 @@ const server = new Server({
         const noteId = data.documentName;
         const headers = documentHeaders.get(noteId) || {};
 
+        console.log(JSON.stringify(data.document, null, 2));
         if (debounceMap.has(noteId)) {
             clearTimeout(debounceMap.get(noteId));
         }
