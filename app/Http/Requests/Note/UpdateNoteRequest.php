@@ -24,7 +24,7 @@ class UpdateNoteRequest extends FormRequest
     {
         return [
             'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'content' => ['sometimes', 'required', 'string'],
+            'content' => ['sometimes', 'required', 'array'],
             'space_id' => ['sometimes', 'nullable', 'uuid', 'exists:spaces,id'],
             'preview' => ['sometimes', 'string'],
         ];

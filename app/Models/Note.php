@@ -21,7 +21,7 @@ class Note extends Model
     ];
 
     protected $casts = [
-        'content' => Base64::class,
+        'content' => 'array',
     ];
 
     public function space(): BelongsTo

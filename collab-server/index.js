@@ -1,16 +1,15 @@
 import {Server} from "@hocuspocus/server";
-import * as Y from "yjs";
 import axios from "axios";
 import * as cookie from "cookie";
 import 'dotenv/config'
 
-
 const API_BASE_URL = process.env.API_BASE_URL;
-console.log(API_BASE_URL)
+console.log(API_BASE_URL);
+
 const debounceMap = new Map();
 const documentHeaders = new Map();
-const parseHeaders = (requestHeaders) => {
 
+const parseHeaders = (requestHeaders) => {
     if (typeof requestHeaders?.entries === 'function') {
         return Object.fromEntries(requestHeaders.entries());
     }
@@ -28,18 +27,16 @@ const getXsrfToken = (headers) => {
     }
 };
 
-
 const saveDocument = async (noteId, document, headers) => {
-    const update = Y.encodeStateAsUpdate(document);
+    const ytext = document.getText("");
+    const delta = ytext.toDelta();
 
-    const previewText = document
-        .getText("")
-        .toString()
+    const previewText = delta?.ops
+        ?.map(op => typeof op.insert === 'string' ? op.insert : '')
+        .join('')
         .replace(/\s+/g, ' ')
         .trim()
         .slice(0, 200);
-
-    const base64 = Buffer.from(update).toString("base64");
 
     const xsrfToken = getXsrfToken(headers);
 
@@ -47,7 +44,7 @@ const saveDocument = async (noteId, document, headers) => {
         const response = await axios.put(
             `${API_BASE_URL}/v1/notes/${noteId}`,
             {
-                content: base64,
+                content: delta,
                 preview: previewText
             },
             {
@@ -78,7 +75,6 @@ const server = new Server({
         const noteId = data.documentName;
         const headers = documentHeaders.get(noteId) || {};
 
-
         if (debounceMap.has(noteId)) {
             clearTimeout(debounceMap.get(noteId));
             debounceMap.delete(noteId);
@@ -92,8 +88,6 @@ const server = new Server({
         const headers = parseHeaders(data.requestHeaders);
         documentHeaders.set(data.documentName, headers);
 
-
-
         console.log("[load] cookie:", headers.cookie ? "yes" : "MISSING");
 
         try {
@@ -104,12 +98,13 @@ const server = new Server({
                     withCredentials: true,
                 }
             );
+
             const note = response.data.data;
-            if (note?.content) {
-                const binary = Buffer.from(note.content, "base64");
-                const update = new Uint8Array(binary);
-                Y.applyUpdate(data.document, update);
+            if (Array.isArray(note.content) && note.content.length > 0) {
+                const ytext = data.document.getText("");
+                ytext.applyDelta(note.content);
             }
+
         } catch (error) {
             console.error("[load] error:", error.response?.data || error.message);
         }
@@ -119,7 +114,6 @@ const server = new Server({
         const noteId = data.documentName;
         const headers = documentHeaders.get(noteId) || {};
 
-        console.log(JSON.stringify(data.document, null, 2));
         if (debounceMap.has(noteId)) {
             clearTimeout(debounceMap.get(noteId));
         }

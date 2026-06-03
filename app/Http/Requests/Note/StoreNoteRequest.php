@@ -24,7 +24,7 @@ class StoreNoteRequest extends FormRequest
     {
         return [
             'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'content' => ['sometimes', 'string'],
+            'content' => ['sometimes', 'array'],
             'space_id' => ['nullable', 'uuid', 'exists:spaces,id'],
             'preview' => ['sometimes', 'string'],
         ];
