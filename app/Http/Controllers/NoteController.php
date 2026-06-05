@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Note\StoreNoteRequest;
+use App\Http\Requests\Note\SummarizeNoteRequest;
 use App\Http\Requests\Note\UpdateNoteRequest;
 use App\Models\Note;
 use App\Models\Space;
+use App\Services\SummaryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Authorize;
@@ -40,7 +42,7 @@ class NoteController extends Controller
     {
 
         $data = $request->validated();
-        if (! isset($data['title'])) {
+        if (!isset($data['title'])) {
             $data['title'] = 'Untitled';
         }
         if ($space) {
@@ -93,5 +95,18 @@ class NoteController extends Controller
         $note->delete();
 
         return response()->json(['message' => 'Note deleted.']);
+    }
+
+    public function summarize(Note $note, SummaryService $service)
+    {
+        $service->summarize($note->content, $note->title, $note->user_id, $note->space_id);
+        return response()->json(["message" => "Summary in progress"], 202);
+    }
+
+    public function summarizeText(SummarizeNoteRequest $request, SummaryService $service)
+    {
+        $data = $request->validated();
+        $service->summarize($data["content"], "Untitled Summary", auth()->user()->id, null);
+        return response()->json(["message" => "Summary in progress"], 202);
     }
 }
