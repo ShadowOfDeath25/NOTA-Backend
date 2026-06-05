@@ -2,10 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Note;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -22,11 +19,9 @@ class NoteSummarizationFailed implements ShouldBroadcast
         public readonly string $userId,
         public readonly string $reason,
         public readonly string $noteTitle
-    )
-    {
+    ) {
         //
     }
-
 
     public function broadcastOn(): PrivateChannel
     {
@@ -41,6 +36,7 @@ class NoteSummarizationFailed implements ShouldBroadcast
             'reason' => $this->reason,
         ];
     }
+
     public function broadcastAs(): string
     {
         return 'note.summarization_failed';

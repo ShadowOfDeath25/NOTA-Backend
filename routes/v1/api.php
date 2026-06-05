@@ -32,7 +32,7 @@ Route::middleware('guest:web')->group(function () {
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->middleware(array_filter([
-            $limiter ? 'throttle:' . $limiter : null,
+            $limiter ? 'throttle:'.$limiter : null,
         ]));
     Route::post('/register', [RegisteredUserController::class, 'store']);
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
@@ -41,7 +41,7 @@ Route::middleware('guest:web')->group(function () {
     if (Features::twoFactorAuthentication()) {
         Route::post('/two-factor-challenge', [TwoFactorAuthenticatedSessionController::class, 'store'])
             ->middleware(array_filter([
-                $twoFactorLimiter ? 'throttle:' . $twoFactorLimiter : null,
+                $twoFactorLimiter ? 'throttle:'.$twoFactorLimiter : null,
             ]));
     }
 });
@@ -63,9 +63,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     if (Features::enabled(Features::emailVerification())) {
         Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
-            ->middleware(['signed', 'throttle:' . $verificationLimiter]);
+            ->middleware(['signed', 'throttle:'.$verificationLimiter]);
         Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-            ->middleware(['throttle:' . $verificationLimiter]);
+            ->middleware(['throttle:'.$verificationLimiter]);
     }
 
     if (Features::twoFactorAuthentication()) {
@@ -81,7 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('notes', NoteController::class);
     Route::apiResource('spaces.notes', NoteController::class);
     Route::apiResource('spaces', SpaceController::class);
-    Route::post("/summarize", [NoteController::class, 'summarizeText']);
+    Route::post('/summarize', [NoteController::class, 'summarizeText']);
     Route::get('notes/{note}/summarize', [NoteController::class, 'summarize']);
 
 });

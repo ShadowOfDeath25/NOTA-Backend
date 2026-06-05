@@ -38,7 +38,7 @@ class AuthController extends Controller
 
     public function refreshToken(Request $request): JsonResponse
     {
-        if ($this->clientDetector->isMobile()) {
+        if ($this->clientDetector->isMobile($request)) {
             $user = $request->user();
 
             if (! $user) {
@@ -79,7 +79,7 @@ class AuthController extends Controller
 
     public function twoFactorChallenge(Request $request): JsonResponse
     {
-        if ($this->clientDetector->isMobile()) {
+        if ($this->clientDetector->isMobile($request)) {
             $user = $request->user();
 
             if (! $user) {

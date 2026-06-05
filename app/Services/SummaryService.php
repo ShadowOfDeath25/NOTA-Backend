@@ -14,13 +14,13 @@ class SummaryService
     public function summarize(array $content, string $title, string $userId, ?string $spaceId)
     {
         $agent = new Summarizer;
-        $agent->queue(prompt: 'Summarize This note: ' . json_encode($content))
+        $agent->queue(prompt: 'Summarize This note: '.json_encode($content))
             ->then(function (AgentResponse $response) use ($title, $userId, $spaceId) {
                 $summary = Note::create([
-                    "title" => $title . " (Summarized)",
-                    "content" => json_decode($response->structured["value"])->ops,
-                    "user_id" => $userId,
-                    "space_id" => $spaceId
+                    'title' => $title.' (Summarized)',
+                    'content' => json_decode($response->structured['value'])->ops,
+                    'user_id' => $userId,
+                    'space_id' => $spaceId,
                 ]);
 
                 NoteSummarized::dispatch($userId, $summary);

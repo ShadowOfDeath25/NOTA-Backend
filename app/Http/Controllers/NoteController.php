@@ -42,7 +42,7 @@ class NoteController extends Controller
     {
 
         $data = $request->validated();
-        if (!isset($data['title'])) {
+        if (! isset($data['title'])) {
             $data['title'] = 'Untitled';
         }
         if ($space) {
@@ -100,13 +100,15 @@ class NoteController extends Controller
     public function summarize(Note $note, SummaryService $service)
     {
         $service->summarize($note->content, $note->title, $note->user_id, $note->space_id);
-        return response()->json(["message" => "Summary in progress"], 202);
+
+        return response()->json(['message' => 'Summary in progress'], 202);
     }
 
     public function summarizeText(SummarizeNoteRequest $request, SummaryService $service)
     {
         $data = $request->validated();
-        $service->summarize($data["content"], "Untitled Summary", auth()->user()->id, null);
-        return response()->json(["message" => "Summary in progress"], 202);
+        $service->summarize($data['content'], 'Untitled Summary', auth()->user()->id, null);
+
+        return response()->json(['message' => 'Summary in progress'], 202);
     }
 }

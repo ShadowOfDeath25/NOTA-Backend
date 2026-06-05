@@ -3,9 +3,7 @@
 namespace App\Events;
 
 use App\Models\Note;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -20,11 +18,8 @@ class NoteSummarized implements ShouldBroadcast
      */
     public function __construct(
         public readonly string $userId,
-        public readonly Note   $summary
-    )
-    {
-    }
-
+        public readonly Note $summary
+    ) {}
 
     public function broadcastOn(): PrivateChannel
     {
@@ -39,10 +34,9 @@ class NoteSummarized implements ShouldBroadcast
             'space_id' => $this->summary->space_id,
         ];
     }
+
     public function broadcastAs(): string
     {
         return 'note.summarized';
     }
-
-
 }

@@ -58,7 +58,7 @@ class SocialAuthController extends Controller
                 return redirect("{$frontendUrl}/login?error=auth_failed");
             }
 
-            if ($this->clientDetector->isMobile()) {
+            if ($this->clientDetector->isMobile(request())) {
                 $token = $this->authService->createTokenForUser($user, "{$provider}-auth-token");
 
                 return response()->json([
