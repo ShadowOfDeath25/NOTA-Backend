@@ -22,7 +22,9 @@
         "laravel/tinker": "^3.0",
         "predis/predis": "^3.5",
         "spatie/laravel-permission": "^7.2",
-        "spatie/laravel-query-builder": "^6.4"
+        "spatie/laravel-query-builder": "^6.4",
+        "spiral/roadrunner-cli": "^2.6.0",
+        "spiral/roadrunner-http": "^3.3.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
