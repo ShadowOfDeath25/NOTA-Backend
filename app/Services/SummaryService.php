@@ -22,9 +22,9 @@ class SummaryService
                     "user_id" => $userId,
                     "space_id" => $spaceId
                 ]);
-                logger('note created', ['id' => $summary->id]);
+
                 NoteSummarized::dispatch($userId, $summary);
-                logger('event dispatched');
+
             })->catch(function (Throwable $e) use ($userId, $title) {
                 logger()->error('Summarization failed', [
                     'user_id' => $userId,
