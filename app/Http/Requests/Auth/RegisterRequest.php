@@ -35,8 +35,6 @@ class RegisterRequest extends FormRequest
                 Rule::unique(User::class),
             ],
             'password' => CreateNewUser::passwordRules(),
-            'gender' => ['string', 'in:male,female'],
-            'phone_number' => ['string', 'numeric', 'max:15'],
         ];
     }
 }

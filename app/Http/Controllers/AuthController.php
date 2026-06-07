@@ -14,19 +14,6 @@ class AuthController extends Controller
         private readonly ClientDetector $clientDetector
     ) {}
 
-    public function user(Request $request): JsonResponse
-    {
-        $user = $this->authService->getAuthenticatedUser($request);
-
-        if (! $user) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
-        }
-
-        return response()->json([
-            'user' => $user,
-        ]);
-    }
-
     public function logout(Request $request): JsonResponse
     {
         $this->authService->logout($request);
