@@ -23,7 +23,7 @@ class SummarizeNoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' => ['string', 'required_unless:file'],
+            'content' => ['string', 'required_without:file'],
         ];
     }
 }

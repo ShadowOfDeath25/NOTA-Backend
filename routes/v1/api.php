@@ -79,7 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
     }
 
     Route::apiResource('notes', NoteController::class);
-    Route::apiResource('spaces.notes', NoteController::class);
+    Route::apiResource('spaces.notes', NoteController::class)->shallow();
     Route::apiResource('spaces', SpaceController::class);
     Route::post('/summarize', [NoteController::class, 'summarizeText']);
     Route::get('notes/{note}/summarize', [NoteController::class, 'summarize']);
