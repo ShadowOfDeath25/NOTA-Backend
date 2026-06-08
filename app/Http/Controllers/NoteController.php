@@ -23,7 +23,8 @@ class NoteController extends Controller
     public function index(Request $request, ?Space $space): JsonResponse
     {
         $q = Note::query();
-        if ($space) {
+
+        if ($space->id) {
             $q->where('space_id', $space->id);
         } else {
             $q->where('user_id', $request->user()->id);
