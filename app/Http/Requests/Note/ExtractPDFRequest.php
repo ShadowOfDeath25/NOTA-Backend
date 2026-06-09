@@ -5,7 +5,7 @@ namespace App\Http\Requests\Note;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateNoteRequest extends FormRequest
+class ExtractPDFRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,8 @@ class UpdateNoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'string', 'max:255'],
-            'content' => ['sometimes', 'array'],
-            'space_id' => ['sometimes', 'nullable', 'uuid', 'exists:spaces,id'],
-            'preview' => ['sometimes', 'string'],
+            'file' => ['required', 'file', 'extensions:pdf', 'mimes:pdf'],
+            'space_id' => ['sometimes', 'exists:spaces,id'],
         ];
     }
 }
