@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DeviceUser extends Pivot
 {
-    use HasUuids;
+    use HasUuids,SoftDeletes;
 
     protected $fillable = [
         'device_id',

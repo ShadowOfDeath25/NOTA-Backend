@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 // مش عارف صح ولا لا
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 //
 class Space extends Model
 {
-    use HasUuids;
+    use HasUuids,SoftDeletes;
 
     protected $fillable = [
         'description',
