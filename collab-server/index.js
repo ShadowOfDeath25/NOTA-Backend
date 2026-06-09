@@ -31,12 +31,13 @@ const saveDocument = async (noteId, document, headers) => {
     const ytext = document.getText("");
     const delta = ytext.toDelta();
 
-    const previewText = delta?.ops
+    const previewText = delta
         ?.map(op => typeof op.insert === 'string' ? op.insert : '')
         .join('')
         .replace(/\s+/g, ' ')
         .trim()
         .slice(0, 200);
+    console.log("[Save] preview text => " + previewText)
 
     const xsrfToken = getXsrfToken(headers);
 

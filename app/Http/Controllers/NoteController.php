@@ -44,7 +44,7 @@ class NoteController extends Controller
     {
 
         $data = $request->validated();
-        if (! isset($data['title'])) {
+        if (!isset($data['title'])) {
             $data['title'] = 'Untitled';
         }
         if ($space) {
@@ -101,6 +101,9 @@ class NoteController extends Controller
 
     public function summarize(Note $note, AIService $service)
     {
+        if (!$note->content) {
+            return response()->json(["message" => "Empty note"], 422);
+        }
         $service->summarize($note->content, $note->title, $note->user_id, $note->space_id);
 
         return response()->json(['message' => 'Summary in progress'], 202);

@@ -23,8 +23,8 @@ class UpdateNoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'content' => ['sometimes', 'required', 'array'],
+            'title' => ['sometimes', 'string', 'max:255'],
+            'content' => ['sometimes', 'array'],
             'space_id' => ['sometimes', 'nullable', 'uuid', 'exists:spaces,id'],
             'preview' => ['sometimes', 'string'],
         ];
