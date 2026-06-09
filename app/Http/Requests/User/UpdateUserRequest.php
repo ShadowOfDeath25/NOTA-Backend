@@ -28,7 +28,8 @@ class UpdateUserRequest extends FormRequest
             "settings.2FA" => ["sometimes", "boolean"],
             "settings.language" => ["sometimes", 'string', 'in:english,العربية'],
             'settings.email_notifications' => ["sometimes", "boolean"],
-            "settings.push_notifications" => ["sometimes", "boolean"]
+            "settings.push_notifications" => ["sometimes", "boolean"],
+            "settings.theme" => ["sometimes", 'string', 'in:light,dark']
         ];
     }
 }

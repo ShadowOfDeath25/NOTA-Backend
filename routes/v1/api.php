@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SpaceController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
@@ -32,7 +33,7 @@ Route::middleware('guest:web')->group(function () {
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->middleware(array_filter([
-            $limiter ? 'throttle:'.$limiter : null,
+            $limiter ? 'throttle:' . $limiter : null,
         ]));
     Route::post('/register', [RegisteredUserController::class, 'store']);
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
@@ -41,7 +42,7 @@ Route::middleware('guest:web')->group(function () {
     if (Features::twoFactorAuthentication()) {
         Route::post('/two-factor-challenge', [TwoFactorAuthenticatedSessionController::class, 'store'])
             ->middleware(array_filter([
-                $twoFactorLimiter ? 'throttle:'.$twoFactorLimiter : null,
+                $twoFactorLimiter ? 'throttle:' . $twoFactorLimiter : null,
             ]));
     }
 });
@@ -51,6 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::match(['put', 'patch'], '/users/{user}', [UserController::class, 'update'])->name('user.update');
     Route::post('/auth/refresh-token', [AuthController::class, 'refreshToken']);
     Route::post('/auth/revoke-other-tokens', [AuthController::class, 'revokeOtherTokens']);
     Route::post('/auth/confirm-password', [AuthController::class, 'confirmPassword']);
@@ -63,9 +65,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     if (Features::enabled(Features::emailVerification())) {
         Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
-            ->middleware(['signed', 'throttle:'.$verificationLimiter]);
+            ->middleware(['signed', 'throttle:' . $verificationLimiter]);
         Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-            ->middleware(['throttle:'.$verificationLimiter]);
+            ->middleware(['throttle:' . $verificationLimiter]);
     }
 
     if (Features::twoFactorAuthentication()) {

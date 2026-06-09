@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\UserSettingsCast;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -52,7 +53,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'settings' => 'array'
+            'settings' => UserSettingsCast::class,
         ];
     }
 
