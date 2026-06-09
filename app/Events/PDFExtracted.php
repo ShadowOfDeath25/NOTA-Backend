@@ -3,14 +3,11 @@
 namespace App\Events;
 
 use App\Models\Note;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-
 
 class PDFExtracted implements ShouldBroadcast
 {
@@ -21,12 +18,10 @@ class PDFExtracted implements ShouldBroadcast
      */
     public function __construct(
         public readonly string $userId,
-        public readonly Note  $note
-    )
-    {
+        public readonly Note $note
+    ) {
         //
     }
-
 
     public function broadcastOn(): PrivateChannel
     {
@@ -43,6 +38,6 @@ class PDFExtracted implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return "pdf.extracted";
+        return 'pdf.extracted';
     }
 }

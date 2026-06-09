@@ -2,9 +2,7 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -19,15 +17,14 @@ class PDFExtractionFailed implements ShouldBroadcast
      */
     public function __construct(
         public readonly string $userId,
-    )
-    {
+    ) {
         //
     }
 
     public function broadcastWith(): array
     {
         return [
-            "message" => "PDF extraction failed, try again later."
+            'message' => 'PDF extraction failed, try again later.',
         ];
     }
 
@@ -36,9 +33,8 @@ class PDFExtractionFailed implements ShouldBroadcast
         return new PrivateChannel("App.Models.User.{$this->userId}");
     }
 
-
     public function broadcastAs(): string
     {
-        return "pdf.extraction_failed";
+        return 'pdf.extraction_failed';
     }
 }

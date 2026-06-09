@@ -127,7 +127,7 @@ class PDFReader implements Agent, Conversational, HasStructuredOutput, HasTools
     {
         return [
             'delta' => $schema->string()->required(),
-            'title' => $schema->string()->required()
+            'title' => $schema->string()->required(),
         ];
     }
 }

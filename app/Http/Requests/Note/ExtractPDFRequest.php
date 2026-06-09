@@ -23,8 +23,8 @@ class ExtractPDFRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => ["required", 'file', 'extensions:pdf', "mimes:pdf"],
-            'space_id' => ['sometimes', 'exists:spaces,id']
+            'file' => ['required', 'file', 'extensions:pdf', 'mimes:pdf'],
+            'space_id' => ['sometimes', 'exists:spaces,id'],
         ];
     }
 }
