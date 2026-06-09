@@ -17,13 +17,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->json('settings')->nullable()->default(json_encode([
-                "language" => "english",
-                "theme" => "dark",
-                "email_notification" => false,
-                "push_notification" => false,
-                '2fa' => false
-            ]));
+            $table->json('settings')->nullable();
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();
