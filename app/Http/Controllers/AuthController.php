@@ -25,9 +25,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
-        $spaces = SpaceUser::where('user_id', $user->id)
-            ->pluck('role', 'space_id');
-
         return response()->json([
             'user' => $user,
         ]);
