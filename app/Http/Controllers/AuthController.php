@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ClientDetector;
+use App\Models\SpaceUser;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,9 +11,27 @@ use Illuminate\Http\Request;
 class AuthController extends Controller
 {
     public function __construct(
-        private readonly AuthService $authService,
+        private readonly AuthService    $authService,
         private readonly ClientDetector $clientDetector
-    ) {}
+    )
+    {
+    }
+
+    public function user(Request $request): JsonResponse
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        $spaces = SpaceUser::where('user_id', $user->id)
+            ->pluck('role', 'space_id');
+
+        return response()->json([
+            'user' => $user,
+        ]);
+    }
 
     public function logout(Request $request): JsonResponse
     {
@@ -25,10 +44,10 @@ class AuthController extends Controller
 
     public function refreshToken(Request $request): JsonResponse
     {
-        if ($this->clientDetector->isMobile()) {
+        if ($this->clientDetector->isMobile($request)) {
             $user = $request->user();
 
-            if (! $user) {
+            if (!$user) {
                 return response()->json(['message' => 'Unauthenticated'], 401);
             }
 
@@ -49,7 +68,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! $user) {
+        if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
@@ -66,10 +85,10 @@ class AuthController extends Controller
 
     public function twoFactorChallenge(Request $request): JsonResponse
     {
-        if ($this->clientDetector->isMobile()) {
+        if ($this->clientDetector->isMobile($request)) {
             $user = $request->user();
 
-            if (! $user) {
+            if (!$user) {
                 return response()->json(['message' => 'Unauthenticated'], 401);
             }
 
@@ -101,11 +120,11 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! $user) {
+        if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
-        if (! $user->two_factor_confirmed_at) {
+        if (!$user->two_factor_confirmed_at) {
             return response()->json(['message' => 'Two-factor authentication not enabled'], 400);
         }
 
@@ -119,7 +138,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! $user) {
+        if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
@@ -134,7 +153,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! $user) {
+        if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 

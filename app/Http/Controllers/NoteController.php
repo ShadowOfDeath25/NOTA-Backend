@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Note\ExtractPDFRequest;
 use App\Http\Requests\Note\StoreNoteRequest;
+use App\Http\Requests\Note\SummarizeNoteRequest;
 use App\Http\Requests\Note\UpdateNoteRequest;
 use App\Models\Note;
 use App\Models\Space;
+use App\Services\AIService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Authorize;
@@ -20,7 +23,8 @@ class NoteController extends Controller
     public function index(Request $request, ?Space $space): JsonResponse
     {
         $q = Note::query();
-        if ($space) {
+
+        if ($space->id) {
             $q->where('space_id', $space->id);
         } else {
             $q->where('user_id', $request->user()->id);
@@ -39,8 +43,15 @@ class NoteController extends Controller
     public function store(StoreNoteRequest $request, ?Space $space = null): JsonResponse
     {
 
+        $data = $request->validated();
+        if (! isset($data['title'])) {
+            $data['title'] = 'Untitled';
+        }
+        if ($space) {
+            $data['space_id'] = $space->id;
+        }
         $note = Note::create([
-            ...$request->validated(),
+            ...$data,
             'user_id' => $request->user()->id,
         ]);
 
@@ -53,7 +64,7 @@ class NoteController extends Controller
     public function show(Request $request, Note $note): JsonResponse
     {
         if ($note->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Not found.'], 404);
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
 
         return response()->json(['data' => $note]);
@@ -67,8 +78,9 @@ class NoteController extends Controller
         if ($note->user_id !== $request->user()->id) {
             return response()->json(['message' => 'Not found.'], 404);
         }
+        $data = $request->validated();
 
-        $note->update($request->validated());
+        $note->update($data);
 
         return response()->json(['data' => $note]);
     }
@@ -85,5 +97,29 @@ class NoteController extends Controller
         $note->delete();
 
         return response()->json(['message' => 'Note deleted.']);
+    }
+
+    public function summarize(Note $note, AIService $service)
+    {
+        $service->summarize($note->content, $note->title, $note->user_id, $note->space_id);
+
+        return response()->json(['message' => 'Summary in progress'], 202);
+    }
+
+    public function summarizeText(SummarizeNoteRequest $request, AIService $service)
+    {
+        $data = $request->validated();
+        $service->summarize($data['content'], 'Untitled Summary', auth()->user()->id, null);
+
+        return response()->json(['message' => 'Summary in progress'], 202);
+    }
+
+    public function fromPDF(ExtractPDFRequest $request, AIService $service)
+    {
+        $data = $request->validated();
+        $service->extractPDF($data['file'], auth()->user()->id, $data['space_id'] ?? null);
+
+        return response()->json(['message' => 'Extraction in progress'], 202);
+
     }
 }

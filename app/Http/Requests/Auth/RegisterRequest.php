@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Actions\Fortify\CreateNewUser;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
 {
@@ -34,7 +34,8 @@ class RegisterRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class),
             ],
-            'password' => CreateNewUser::passwordRules(),
+            'password' => ['required', 'string', Password::default(), 'confirmed'],
+
         ];
     }
 }

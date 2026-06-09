@@ -18,6 +18,11 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    'openRouter' => [
+        'key' => env('OPEN_ROUTER_API_KEY'),
+        'model' => env('OPEN_ROUTER_MODEL'),
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],

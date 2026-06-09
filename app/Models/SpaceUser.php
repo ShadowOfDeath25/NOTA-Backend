@@ -12,7 +12,7 @@ class SpaceUser extends Pivot
     protected $fillable = [
         'space_id',
         'user_id',
-        'is_owner',
+        'role',
         'joined_at',
     ];
 }

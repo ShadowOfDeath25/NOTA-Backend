@@ -36,11 +36,6 @@ final class AuthService
         return $this->clientDetector->isMobile();
     }
 
-    public function isAuthenticatedViaSession(): bool
-    {
-        return $this->clientDetector->isSPA();
-    }
-
     public function logout(Request $request): void
     {
         if ($this->isAuthenticatedViaToken()) {
@@ -50,10 +45,5 @@ final class AuthService
             $request->session()->invalidate();
             $request->session()->regenerateToken();
         }
-    }
-
-    public function getAuthenticatedUser(Request $request): ?User
-    {
-        return $request->user();
     }
 }

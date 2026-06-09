@@ -14,7 +14,7 @@ class LoginResponse implements LoginResponseContract
 
     public function toResponse($request): JsonResponse
     {
-        if ($this->clientDetector->isMobile()) {
+        if ($this->clientDetector->isMobile($request)) {
             $token = $request->user()->createToken('auth-token');
 
             return response()->json([

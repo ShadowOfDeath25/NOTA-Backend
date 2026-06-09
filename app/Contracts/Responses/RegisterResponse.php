@@ -17,7 +17,7 @@ class RegisterResponse implements RegisterResponseContract
     {
         $user = $request->user();
 
-        if ($this->clientDetector->isMobile() && $user instanceof User) {
+        if ($this->clientDetector->isMobile($request) && $user instanceof User) {
             $token = $user->createToken('auth-token');
 
             return response()->json([

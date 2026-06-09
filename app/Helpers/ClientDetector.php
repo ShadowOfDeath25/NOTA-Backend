@@ -12,51 +12,49 @@ final class ClientDetector
 
     public const HEADER_CLIENT_TYPE = 'X-Client-Type';
 
-    public function __construct(
-        private readonly Request $request
-    ) {}
-
-    public function detect(): string
+    public function detect(?Request $request = null): string
     {
-        if ($this->hasMobileHeader()) {
+        $request ??= request();
+
+        if ($this->hasMobileHeader($request)) {
             return self::TYPE_MOBILE;
         }
 
-        if ($this->isAuthenticatedViaBearerToken()) {
+        if ($this->isAuthenticatedViaBearerToken($request)) {
             return self::TYPE_MOBILE;
         }
 
-        if ($this->isRequestFromStatefulDomain()) {
+        if ($this->isRequestFromStatefulDomain($request)) {
             return self::TYPE_SPA;
         }
 
         return self::TYPE_SPA;
     }
 
-    public function isMobile(): bool
+    public function isMobile(?Request $request = null): bool
     {
-        return $this->detect() === self::TYPE_MOBILE;
+        return $this->detect($request) === self::TYPE_MOBILE;
     }
 
-    public function isSPA(): bool
+    public function isSPA(?Request $request = null): bool
     {
-        return $this->detect() === self::TYPE_SPA;
+        return $this->detect($request) === self::TYPE_SPA;
     }
 
-    private function hasMobileHeader(): bool
+    private function hasMobileHeader(Request $request): bool
     {
-        return $this->request->header(self::HEADER_CLIENT_TYPE) === self::TYPE_MOBILE;
+        return $request->header(self::HEADER_CLIENT_TYPE) === self::TYPE_MOBILE;
     }
 
-    private function isAuthenticatedViaBearerToken(): bool
+    private function isAuthenticatedViaBearerToken(Request $request): bool
     {
-        return $this->request->bearerToken() !== null;
+        return $request->bearerToken() !== null;
     }
 
-    private function isRequestFromStatefulDomain(): bool
+    private function isRequestFromStatefulDomain(Request $request): bool
     {
-        $origin = $this->request->header('Origin');
-        $referer = $this->request->header('Referer');
+        $origin = $request->header('Origin');
+        $referer = $request->header('Referer');
 
         if (! $origin && ! $referer) {
             return false;
@@ -81,14 +79,7 @@ final class ClientDetector
 
     private function getStatefulDomains(): array
     {
-        $domains = config('sanctum.stateful', []);
-        $envDomains = env('SANCTUM_STATEFUL_DOMAINS', '');
-
-        if ($envDomains) {
-            $domains = array_merge($domains, explode(',', $envDomains));
-        }
-
-        return array_filter(array_unique($domains));
+        return array_filter(array_unique(config('sanctum.stateful', [])));
     }
 
     private function normalizeDomain(string $domain): string

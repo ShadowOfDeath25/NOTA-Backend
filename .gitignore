@@ -13,6 +13,7 @@
 /.zed
 /auth.json
 /node_modules
+/collab-server/node_modules
 /public/build
 /public/hot
 /public/storage
@@ -41,3 +42,5 @@ frankenphp-worker.php
 **/caddy
 frankenphp
 frankenphp-worker.php
+rr
+.rr.yaml

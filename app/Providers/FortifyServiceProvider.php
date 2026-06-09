@@ -9,8 +9,6 @@ use App\Actions\Fortify\UpdateUserProfileInformation;
 use App\Contracts\Responses\LoginResponse;
 use App\Contracts\Responses\LogoutResponse;
 use App\Contracts\Responses\RegisterResponse;
-use App\Helpers\ClientDetector;
-use App\Services\AuthService;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -28,25 +26,7 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(ClientDetector::class, function ($app) {
-            return new ClientDetector(request());
-        });
-
-        $this->app->singleton(AuthService::class, function ($app) {
-            return new AuthService($app->make(ClientDetector::class));
-        });
-
-        $this->app->singleton(LoginResponse::class, function ($app) {
-            return new LoginResponse($app->make(ClientDetector::class));
-        });
-
-        $this->app->singleton(LogoutResponse::class, function ($app) {
-            return new LogoutResponse($app->make(AuthService::class));
-        });
-
-        $this->app->singleton(RegisterResponse::class, function ($app) {
-            return new RegisterResponse($app->make(ClientDetector::class));
-        });
+        Fortify::ignoreRoutes();
     }
 
     /**
