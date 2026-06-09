@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SpaceController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
@@ -50,7 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     $verificationLimiter = config('fortify.limiters.verification', '6,1');
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
-    Route::get('/user', [AuthController::class, 'user']);
+    Route::get('/user', [UserController::class, 'show']);
+    Route::put('/user', [UserController::class, 'update']);
     Route::post('/auth/refresh-token', [AuthController::class, 'refreshToken']);
     Route::post('/auth/revoke-other-tokens', [AuthController::class, 'revokeOtherTokens']);
     Route::post('/auth/confirm-password', [AuthController::class, 'confirmPassword']);
@@ -79,9 +81,6 @@ Route::middleware('auth:sanctum')->group(function () {
     }
 
     Route::apiResource('notes', NoteController::class);
-    Route::apiResource('spaces.notes', NoteController::class)->shallow();
+    Route::apiResource('spaces.notes', NoteController::class);
     Route::apiResource('spaces', SpaceController::class);
-    Route::post('/summarize', [NoteController::class, 'summarizeText']);
-    Route::get('notes/{note}/summarize', [NoteController::class, 'summarize']);
-    Route::post('/notes/read-pdf', [NoteController::class, 'fromPDF']);
 });
