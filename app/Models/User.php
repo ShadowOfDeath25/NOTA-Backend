@@ -69,4 +69,9 @@ class User extends Authenticatable
                 ->pluck('role', 'space_id')
         );
     }
+
+    public function favoriteNotes(): BelongsToMany
+    {
+        return $this->belongsToMany(Note::class, 'favorite_notes', 'user_id', 'note_id');
+    }
 }
