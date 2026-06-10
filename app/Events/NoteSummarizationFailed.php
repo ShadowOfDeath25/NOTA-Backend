@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -19,13 +20,17 @@ class NoteSummarizationFailed implements ShouldBroadcast
         public readonly string $userId,
         public readonly string $reason,
         public readonly string $noteTitle
-    ) {
+    )
+    {
         //
     }
 
-    public function broadcastOn(): PrivateChannel
+    public function broadcastOn(): array
     {
-        return new PrivateChannel("App.Models.User.{$this->userId}");
+        return [
+            new PrivateChannel("App.Models.User.{$this->userId}"),
+            new Channel("users.{$this->userId}")
+        ];
     }
 
     public function broadcastWith(): array

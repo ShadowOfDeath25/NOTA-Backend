@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -28,9 +29,12 @@ class PDFExtractionFailed implements ShouldBroadcast
         ];
     }
 
-    public function broadcastOn(): PrivateChannel
+    public function broadcastOn(): array
     {
-        return new PrivateChannel("App.Models.User.{$this->userId}");
+        return [
+            new PrivateChannel("App.Models.User.{$this->userId}"),
+            new Channel("users.{$this->userId}")
+        ];
     }
 
     public function broadcastAs(): string
