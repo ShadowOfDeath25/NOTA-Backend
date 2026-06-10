@@ -160,7 +160,7 @@ class NoteController extends Controller
 
     public function favorites(Request $request)
     {
-        return auth()->user()->favoriteNotes;
+        return response()->json(['data' => auth()->user()->favoriteNotes()->get()]);
     }
 
     public function addToFavorites(Request $request, Note $note)
