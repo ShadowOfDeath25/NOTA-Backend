@@ -92,6 +92,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notes/read-pdf', [NoteController::class, 'fromPDF']);
 
     Route::get('fire-event',function(){
-        \App\Events\NoteSummarized::dispatch(auth()->user()->id,"abc");
+        \App\Events\NoteSummarized::dispatch(auth()->user()->id,\App\Models\Note::inRandomOrder()->first());
     });
 });
