@@ -2,6 +2,7 @@
 
 use App\Events\NoteSummarized;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InviteController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SpaceController;
 use App\Http\Controllers\UserController;
@@ -94,4 +95,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('fire-event',function(){
         \App\Events\NoteSummarized::dispatch(auth()->user()->id,\App\Models\Note::inRandomOrder()->first());
     });
+
+
+
+
+    Route::post('spaces/{space}/invites', [InviteController::class, 'store'])
+        ->name('spaces.invites.store');
+
+    Route::get('invites/{url}/accept', [InviteController::class, 'accept'])
+        ->where('url', '[A-Za-z0-9]{64}')
+        ->name('invites.accept');
 });

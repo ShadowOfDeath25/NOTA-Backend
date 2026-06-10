@@ -17,23 +17,21 @@ use Illuminate\Http\Request;
 
 class InviteController extends Controller
 {
-    public function __construct(private readonly InviteService $inviteService) {}
+    public function __construct(private readonly InviteService $inviteService)
+    {}
 
     /**
      * Display a listing of the resource.
      */
-    //    public function index()
-    //    {
-    //        //
-    //    }
+//    public function index()
+//    {
+//        //
+//    }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -41,7 +39,6 @@ class InviteController extends Controller
     public function store(CreateInviteRequest $request, Space $space): JsonResponse
     {
         $invite = $this->inviteService->create($space, $request->user());
-
         return response()->json([
             'message' => 'Invite created successfully.',
             'date' => new InviteResource($invite),
@@ -52,19 +49,18 @@ class InviteController extends Controller
     {
         try {
             $space = $this->inviteService->accept($url, $request->user());
-
             return response()->json([
                 'message' => 'Space joined successfully.',
                 'data' => new SpaceResource($space),
             ]);
-            // some kind of error I think
+
         } catch (InviteAlreadyUsedException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
-        } catch (InviteExpiredException $e) {
+        } catch (InviteExpiredException $e){
             return response()->json(['message' => $e->getMessage()], 422);
-        } catch (AlreadySpaceMemberException $e) {
+        } catch (AlreadySpaceMemberException $e){
             return response()->json(['message' => $e->getMessage()], 409);
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e){
             return response()->json(['message' => 'Invite link not found.'], 404);
         }
     }
@@ -72,35 +68,9 @@ class InviteController extends Controller
     /**
      * Display the specified resource.
      */
-    //    public function show(Invite $invite)
-    //    {
-    //        //
-    //    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Invite $invite)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Invite $invite)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     // fuck
-    public function destroy(Invite $invite)
-    {
-        //
-    }
+
 
     // will test tomorrow
 }

@@ -24,6 +24,9 @@ class InviteService
         ]);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function accept(string $url, User $user): Space
     {
         // I don't know what TF with transaction till now

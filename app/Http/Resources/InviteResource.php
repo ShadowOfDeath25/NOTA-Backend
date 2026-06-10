@@ -15,10 +15,11 @@ class InviteResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            //'id' => $this->id,
             'invite_url' => url('/join/'.$this->url),
-            'is_expired' => $this->isExpired(),
-            'space_id' => $this->space_id,
+            'expires_at' => $this->expires_at->toISOString(),
+           // 'is_expired' => $this->isExpired(),
+           // 'space_id' => $this->space_id,
         ];
     }
 }
