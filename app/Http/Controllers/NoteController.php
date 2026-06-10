@@ -44,7 +44,7 @@ class NoteController extends Controller
     {
 
         $data = $request->validated();
-        if (!isset($data['title'])) {
+        if (! isset($data['title'])) {
             $data['title'] = 'Untitled';
         }
         if ($space) {
@@ -101,8 +101,8 @@ class NoteController extends Controller
 
     public function summarize(Note $note, AIService $service)
     {
-        if (!$note->content) {
-            return response()->json(["message" => "Empty note"], 422);
+        if (! $note->content) {
+            return response()->json(['message' => 'Empty note'], 422);
         }
         $service->summarize($note->content, $note->title, $note->user_id, $note->space_id);
 
@@ -124,5 +124,37 @@ class NoteController extends Controller
 
         return response()->json(['message' => 'Extraction in progress'], 202);
 
+    }
+
+    public function trashed(Request $request): JsonResponse
+    {
+        $notes = Note::onlyTrashed()
+            ->where('user_id', $request->user()->id)
+            ->latest()
+            ->get();
+
+        return response()->json(['data' => $notes]);
+    }
+
+    public function restore(Request $request, Note $note): JsonResponse
+    {
+        if ($note->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Not found.'], 404);
+        }
+
+        $note->restore();
+
+        return response()->json(['data' => $note]);
+    }
+
+    public function forceDelete(Request $request, Note $note): JsonResponse
+    {
+        if ($note->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Not found.'], 404);
+        }
+
+        $note->forceDelete();
+
+        return response()->json(['message' => 'Note permanently deleted.']);
     }
 }

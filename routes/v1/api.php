@@ -79,6 +79,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user/two-factor-recovery-codes', [RecoveryCodeController::class, 'index']);
         Route::post('/user/two-factor-recovery-codes', [RecoveryCodeController::class, 'store']);
     }
+    Route::get('notes/trashed', [NoteController::class, 'trashed']);
+    Route::post('notes/{note}/restore', [NoteController::class, 'restore'])->withTrashed();
+    Route::delete('notes/{note}/force', [NoteController::class, 'forceDelete'])->withTrashed();
 
     Route::apiResource('notes', NoteController::class);
     Route::apiResource('spaces.notes', NoteController::class)->shallow();

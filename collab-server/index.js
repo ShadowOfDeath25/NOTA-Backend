@@ -37,7 +37,7 @@ const saveDocument = async (noteId, document, headers) => {
         .replace(/\s+/g, ' ')
         .trim()
         .slice(0, 200);
-    console.log("[Save] preview text => " + previewText)
+
 
     const xsrfToken = getXsrfToken(headers);
 
