@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\NoteSummarized;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SpaceController;
@@ -89,4 +90,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/summarize', [NoteController::class, 'summarizeText']);
     Route::get('notes/{note}/summarize', [NoteController::class, 'summarize']);
     Route::post('/notes/read-pdf', [NoteController::class, 'fromPDF']);
+
+    Route::get('fire-event',function(){
+        \App\Events\NoteSummarized::dispatch(auth()->user()->id,"abc");
+    });
 });
