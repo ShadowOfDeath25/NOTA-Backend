@@ -2,9 +2,12 @@
 
 use App\Events\NoteSummarized;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InviteController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SpaceController;
+use App\Http\Controllers\SpaceUserController;
 use App\Http\Controllers\UserController;
+use App\Models\Note;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
@@ -87,11 +90,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('notes', NoteController::class);
     Route::apiResource('spaces.notes', NoteController::class)->shallow();
     Route::apiResource('spaces', SpaceController::class);
+    Route::post('spaces/{space}/invites', [InviteController::class, 'store']);
+    Route::post('invites/{url}/accept', [InviteController::class, 'accept']);
+    Route::put('spaces/{space}/users/{user}', [SpaceUserController::class, 'update']);
     Route::post('/summarize', [NoteController::class, 'summarizeText']);
     Route::get('notes/{note}/summarize', [NoteController::class, 'summarize']);
     Route::post('/notes/read-pdf', [NoteController::class, 'fromPDF']);
 
-    Route::get('fire-event',function(){
-        \App\Events\NoteSummarized::dispatch(auth()->user()->id,\App\Models\Note::inRandomOrder()->first());
+    Route::get('fire-event', function (\Illuminate\Http\Request $request) {
+        NoteSummarized::dispatch($request->user()->id, Note::inRandomOrder()->first());
     });
 });
