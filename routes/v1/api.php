@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\NoteSummarized;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SpaceController;
@@ -51,8 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
     $verificationLimiter = config('fortify.limiters.verification', '6,1');
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
-    Route::get('/user', [UserController::class, 'show']);
-    Route::put('/user', [UserController::class, 'update']);
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::match(['put', 'patch'], '/users/{user}', [UserController::class, 'update'])->name('user.update');
     Route::post('/auth/refresh-token', [AuthController::class, 'refreshToken']);
     Route::post('/auth/revoke-other-tokens', [AuthController::class, 'revokeOtherTokens']);
     Route::post('/auth/confirm-password', [AuthController::class, 'confirmPassword']);
@@ -88,5 +89,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('spaces', SpaceController::class);
     Route::post('/summarize', [NoteController::class, 'summarizeText']);
     Route::get('notes/{note}/summarize', [NoteController::class, 'summarize']);
+    Route::post('/notes/read-pdf', [NoteController::class, 'fromPDF']);
 
+    Route::get('fire-event',function(){
+        \App\Events\NoteSummarized::dispatch(auth()->user()->id,\App\Models\Note::inRandomOrder()->first());
+    });
 });
