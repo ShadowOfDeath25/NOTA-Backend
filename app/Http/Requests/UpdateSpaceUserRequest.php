@@ -28,4 +28,11 @@ class UpdateSpaceUserRequest extends FormRequest
             'role' => ['required', Rule::enum(Role::class)],
         ];
     }
+    public function messages(): array
+    {
+        return [
+            'role.required' => 'Please select a system role for this user.',
+            'role.enum'     => 'The selected role is invalid.',
+        ];
+    }
 }

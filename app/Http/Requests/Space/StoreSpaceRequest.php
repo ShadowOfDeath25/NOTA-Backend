@@ -27,4 +27,16 @@ class StoreSpaceRequest extends FormRequest
             'description' => ['string', 'sometimes'],
         ];
     }
+    public function messages(): array
+    {
+        return [
+            // Name
+            'name.required' => 'The name field is required.',
+            //'name.string'   => 'The name must be a valid string.',
+            'name.max'      => 'The name may not be greater than 255 characters.',
+
+            // Description
+            //'description.string' => 'The description must be a valid string.',
+        ];
+    }
 }

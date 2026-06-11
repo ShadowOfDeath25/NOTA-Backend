@@ -26,4 +26,11 @@ class SummarizeNoteRequest extends FormRequest
             'content' => ['string', 'required_without:file'],
         ];
     }
+    public function messages(): array
+    {
+        return [
+            //'content.string'           => 'The content must be valid text.',
+            'content.required_without' => 'Please provide either text content or upload a file.',
+        ];
+    }
 }

@@ -27,4 +27,18 @@ class ExtractPDFRequest extends FormRequest
             'space_id' => ['sometimes', 'exists:spaces,id'],
         ];
     }
+    public function messages(): array
+    {
+        return [
+            // Custom messages for the 'file' field
+            'file.required'   => 'Please select a file to upload.',
+            'file.file'       => 'The uploaded item must be a valid file.',
+            'file.extensions' => 'Only PDF files are allowed based on the file extension.',
+            'file.mimes'      => 'The file must be a valid PDF document type.',
+
+            // Custom messages for the 'space_id' field
+          //  'space_id.sometimes' => 'The space ID field is optional but must be valid if provided.',
+            'space_id.exists'    => 'The selected space does not exist.',
+        ];
+    }
 }

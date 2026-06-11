@@ -29,4 +29,22 @@ class UpdateNoteRequest extends FormRequest
             'preview' => ['sometimes', 'string'],
         ];
     }
+    public function messages(): array
+    {
+        return [
+            // Title
+            //'title.required' => 'The title field is required.',
+            'title.max'      => 'The title may not be greater than 255 characters.',
+
+            // Content
+//            'content.string' => 'The content must be a valid string.',
+
+            // Space ID
+//            'space_id.uuid'   => 'The space ID must be a valid UUID.',
+            'space_id.exists' => 'The selected space does not exist.',
+
+            // Preview
+//            'preview.string' => 'The preview must be a valid string.',
+        ];
+    }
 }
