@@ -103,7 +103,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notes/read-pdf', [NoteController::class, 'fromPDF']);
 
     Route::get('fire-event', function (\Illuminate\Http\Request $request) {
-        NoteSummarized::dispatch($request->user()->id, Note::inRandomOrder()->first());
+        $note = Note::inRandomOrder()->first();
+        NoteSummarized::dispatch($request->user()->id, $note);
+        \App\Events\PDFExtracted::dispatch($request->user()->id, $note);
     });
 
 
