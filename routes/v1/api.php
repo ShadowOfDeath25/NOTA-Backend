@@ -96,6 +96,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('spaces', SpaceController::class);
     Route::post('spaces/{space}/invites', [InviteController::class, 'store']);
     Route::post('invites/{url}/accept', [InviteController::class, 'accept']);
+    Route::get("spaces/{space}/users", [SpaceController::class, "users"])->name("space.users");
     Route::put('spaces/{space}/users/{user}', [SpaceUserController::class, 'update']);
     Route::post('/summarize', [NoteController::class, 'summarizeText']);
     Route::get('notes/{note}/summarize', [NoteController::class, 'summarize']);
