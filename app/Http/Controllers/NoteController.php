@@ -30,7 +30,7 @@ class NoteController extends Controller
             $q->where('user_id', $request->user()->id);
         }
         $notes = $q
-            ->latest()
+            ->orderByDesc('updated_at')
             ->get();
 
         return response()->json(['data' => $notes]);
