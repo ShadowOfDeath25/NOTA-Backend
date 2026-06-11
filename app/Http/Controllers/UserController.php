@@ -2,54 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateUserRequest;
-use Illuminate\Http\JsonResponse;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function show(Request $request): JsonResponse
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $user = $request->user();
-
-        // Ensure settings exist with defaults if null
-        $settings = $user->settings ?? [
-            'language' => 'english',
-            'theme' => 'light',
-            'email_notification' => 'on',
-            'push_notification' => 'on',
-            '2FA' => 'off',
-        ];
-
-        // Attach settings explicitly if we want to return it as part of the user object
-        $user->settings = $settings;
-
-        return response()->json([
-            'user' => $user,
-        ]);
-    }
-
-    public function update(UpdateUserRequest $request): JsonResponse
-    {
-        $user = $request->user();
-        $validated = $request->validated();
-
-        // Update generic user fields if provided
-        if (isset($validated['name'])) {
-            $user->name = $validated['name'];
+        if ($user->id !== auth()->user()->id) {
+            return response()->json(["message" => "unauthorized"], 403);
         }
+        $user->update($request->validated());
 
-        // Update settings if provided
-        if (isset($validated['settings'])) {
-            $currentSettings = $user->settings ?? [];
-            $user->settings = array_merge($currentSettings, $validated['settings']);
-        }
-
-        $user->save();
-
-        return response()->json([
-            'message' => 'User updated successfully',
-            'user' => $user,
-        ]);
+        return response()->json(['user' => $user]);
     }
 }
