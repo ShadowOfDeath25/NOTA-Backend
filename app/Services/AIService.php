@@ -15,10 +15,12 @@ use Throwable;
 
 class AIService
 {
-    public function summarize(array $content, string $title, string $userId, ?string $spaceId): void
+    public function summarize(array|string $content, string $title, string $userId, ?string $spaceId): void
     {
         $agent = new Summarizer;
-        $agent->queue(prompt: 'Summarize This note: ' . json_encode($content))
+        $contentType = gettype($content);
+        $finalContent = $contentType === 'string' ? $content : json_encode($content);
+        $agent->queue(prompt: 'Summarize This note: ' . $finalContent)
             ->then(function (AgentResponse $response) use ($title, $userId, $spaceId) {
                 $summary = Note::create([
                     'title' => $title . ' (Summarized)',
@@ -46,7 +48,7 @@ class AIService
             ->then(function (AgentResponse $response) use ($userId, $spaceId) {
                 $note = Note::create([
                     'title' => $response->structured['title'],
-                    'content' => json_decode($response->structured['delta']->ops),
+                    'content' => json_decode($response->structured['delta'])->ops,
                     'user_id' => $userId,
                     'space_id' => $spaceId,
                 ]);
