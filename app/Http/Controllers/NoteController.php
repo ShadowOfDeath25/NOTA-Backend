@@ -169,4 +169,10 @@ class NoteController extends Controller
         return response()->json(["message" => 'Note added to favorites successfully']);
     }
 
+    public function deleteFromFavorites(Request $request, Note $note)
+    {
+        auth()->user()->favoriteNotes()->detach($note->id);
+        return response()->json(["message" => 'Note removed from favorites successfully']);
+    }
+
 }

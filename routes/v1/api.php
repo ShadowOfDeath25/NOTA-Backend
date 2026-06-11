@@ -90,6 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::post('notes/{note}/favorites', [NoteController::class, 'addToFavorites'])->name("notes.favorites.add");
+    Route::delete('notes/{note}/favorites', [NoteController::class, 'deleteFromFavorites'])->name("notes.favorites.delete");
     Route::apiResource('notes', NoteController::class);
     Route::apiResource('spaces.notes', NoteController::class)->shallow();
     Route::apiResource('spaces', SpaceController::class);
@@ -103,8 +104,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('fire-event', function (\Illuminate\Http\Request $request) {
         NoteSummarized::dispatch($request->user()->id, Note::inRandomOrder()->first());
     });
-
-
 
 
     Route::post('spaces/{space}/invites', [InviteController::class, 'store'])
