@@ -17,7 +17,7 @@ class InviteService
     {
         return Invite::create([
             'url' => Invite::generateUrl(),
-            //   'single_use' => $singleUse,
+            'single_use' => false,
             'space_id' => $space->id,
             'user_id' => $user->id,
             'expires_at' => now()->addDays(3),

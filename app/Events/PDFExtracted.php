@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Note;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -18,14 +19,18 @@ class PDFExtracted implements ShouldBroadcast
      */
     public function __construct(
         public readonly string $userId,
-        public readonly Note $note
-    ) {
+        public readonly Note   $note
+    )
+    {
         //
     }
 
-    public function broadcastOn(): PrivateChannel
+    public function broadcastOn(): array
     {
-        return new PrivateChannel("App.Models.User.{$this->userId}");
+        return [
+            new PrivateChannel("App.Models.User.{$this->userId}"),
+            new Channel("users.{$this->userId}")
+        ];
     }
 
     public function broadcastWith(): array

@@ -37,12 +37,11 @@ class Space extends Model
         return $this->users()->where('user_id', $user->id)->exists();
     }
 
-    // Only OWNER or ADMIN roles can create invite links
     public function userIsAdmin(User $user): bool
     {
         return $this->users()
             ->wherePivot('user_id', $user->id)
-            ->wherePivot('role', [
+            ->wherePivotIn('role', [
                 Role::ADMIN->value,
                 Role::OWNER->value,
             ])
@@ -61,6 +60,6 @@ class Space extends Model
 
     public function userRole(User $user)
     {
-        return SpaceUser::where('user_id', $user->id)->first()->role;
+        return SpaceUser::where('user_id', $user->id)->where('space_id', $this->id)->first()?->role;
     }
 }

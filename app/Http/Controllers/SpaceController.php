@@ -19,6 +19,7 @@ class SpaceController extends Controller
         $spaces = $request->user()
             ->spaces()
             ->withCount('notes')
+            ->withCount('users')
             ->latest()
             ->get();
 

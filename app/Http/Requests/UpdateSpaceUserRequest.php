@@ -2,24 +2,19 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Space;
+use App\Enums\Role;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class CreateInviteRequest extends FormRequest
+class UpdateSpaceUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        $space = $this->route('space');
-        
-        if (! $space instanceof Space) {
-            $space = Space::findOrFail($space);
-        }
-
-        return $space->userIsAdmin($this->user());
+        return true;
     }
 
     /**
@@ -30,7 +25,7 @@ class CreateInviteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'role' => ['required', Rule::enum(Role::class)],
         ];
     }
 }

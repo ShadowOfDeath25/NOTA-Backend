@@ -44,7 +44,7 @@ class NoteController extends Controller
     {
 
         $data = $request->validated();
-        if (! isset($data['title'])) {
+        if (!isset($data['title'])) {
             $data['title'] = 'Untitled';
         }
         if ($space) {
@@ -101,7 +101,7 @@ class NoteController extends Controller
 
     public function summarize(Note $note, AIService $service)
     {
-        if (! $note->content) {
+        if (!$note->content) {
             return response()->json(['message' => 'Empty note'], 422);
         }
         $service->summarize($note->content, $note->title, $note->user_id, $note->space_id);
@@ -157,4 +157,16 @@ class NoteController extends Controller
 
         return response()->json(['message' => 'Note permanently deleted.']);
     }
+
+    public function favorites(Request $request)
+    {
+        return response()->json(['data' => auth()->user()->favoriteNotes()->get()]);
+    }
+
+    public function addToFavorites(Request $request, Note $note)
+    {
+        auth()->user()->favoriteNotes()->attach($note->id);
+        return response()->json(["message" => 'Note added to favorites successfully']);
+    }
+
 }
