@@ -99,7 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("spaces/{space}/users", [SpaceController::class, "users"])->name("space.users");
     Route::put('spaces/{space}/users/{user}', [SpaceUserController::class, 'update']);
     Route::post('/summarize', [NoteController::class, 'summarizeText']);
-    Route::get('notes/{note}/summarize', [NoteController::class, 'summarize']);
+    Route::post('notes/{note}/summarize', [NoteController::class, 'summarize']);
     Route::post('/notes/read-pdf', [NoteController::class, 'fromPDF']);
 
     Route::get('fire-event', function (\Illuminate\Http\Request $request) {
