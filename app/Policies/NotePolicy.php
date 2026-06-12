@@ -31,7 +31,7 @@ class NotePolicy
      */
     public function create(User $user, ?Space $space = null): bool
     {
-        return ! $space || in_array($space->userRole($user), [Role::ADMIN->value, Role::OWNER->value, Role::EDITOR->value]);
+        return !$space || in_array($space->userRole($user), [Role::ADMIN->value, Role::OWNER->value, Role::EDITOR->value]);
     }
 
     /**
@@ -39,7 +39,7 @@ class NotePolicy
      */
     public function update(User $user, Note $note, ?Space $space = null): bool
     {
-        return $space ? in_array([Role::ADMIN->value, Role::OWNER->value, Role::EDITOR->value], $space->userRole($user)) : $note->user_id === $user->id;
+        return $space ? in_array($space->userRole($user), [Role::ADMIN->value, Role::OWNER->value, Role::EDITOR->value]) : $note->user_id === $user->id;
     }
 
     /**
@@ -47,7 +47,13 @@ class NotePolicy
      */
     public function delete(User $user, Note $note, ?Space $space = null): bool
     {
-        return $space ? in_array([Role::ADMIN->value, Role::OWNER->value, Role::EDITOR->value], $space->userRole($user)) : $note->user_id === $user->id;
+        if (!$space) {
+            return $note->user_id === $user->id;
+        }
+        $role = $space->userRole($user);
+
+        return in_array($role, [Role::ADMIN->value, Role::OWNER->value])
+            || ($role === Role::EDITOR->value && $note->user_id === $user->id);
     }
 
     /**
@@ -55,14 +61,16 @@ class NotePolicy
      */
     public function restore(User $user, Note $note, ?Space $space = null): bool
     {
-        return $space ? in_array([Role::ADMIN->value, Role::OWNER->value, Role::EDITOR->value], $space->userRole($user)) : $note->user_id === $user->id;
-    }
+        if (!$space) {
+            return $note->user_id === $user->id;
+        }
 
+        $role = $space->userRole($user);
+        return in_array($role, [Role::ADMIN->value, Role::OWNER->value])
+            || ($role === Role::EDITOR->value && $note->user_id === $user->id);
+    }
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Note $note, ?Space $space = null): bool
-    {
-        return $space ? in_array([Role::ADMIN->value, Role::OWNER->value, Role::EDITOR->value], $space->userRole($user)) : $note->user_id === $user->id;
-    }
+
 }
