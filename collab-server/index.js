@@ -30,10 +30,17 @@ const getXsrfToken = (headers) => {
 const saveDocument = async (noteId, document, headers) => {
     const ytext = document.getText("");
     const delta = ytext.toDelta();
+    const nullInserts = delta.filter(op => op.insert === null);
+    if (nullInserts.length > 0) {
+        console.log("[pre save] WARNING: null inserts in delta!", JSON.stringify(nullInserts, null, 2));
+    }
+    console.log("[pre save] content =>", JSON.stringify(delta, null, 2));
+
 
     const previewText = delta
         ?.map(op => typeof op.insert === 'string' ? op.insert : '')
         .join('')
+        .replace(/[\r\n]+/g, ' ')
         .replace(/\s+/g, ' ')
         .trim()
         .slice(0, 200);
@@ -56,7 +63,7 @@ const saveDocument = async (noteId, document, headers) => {
                 withCredentials: true,
             }
         );
-        console.log("[save] success:", response.data);
+        console.log("[save] success:", response.data.data.content);
     } catch (e) {
         console.error("[save] error:", e.response?.data || e.message);
     }
@@ -101,13 +108,34 @@ const server = new Server({
             );
 
             const note = response.data.data;
+            console.log("[Load] content type:", typeof note.content, "isArray:", Array.isArray(note.content));
             if (Array.isArray(note.content) && note.content.length > 0) {
+                const nullInserts = note.content.filter(op => op.insert === null);
+                if (nullInserts.length > 0) {
+                    console.log("[Load] WARNING: null inserts found in loaded content!", JSON.stringify(nullInserts, null, 2));
+                }
+
+                const content = note.content.map(op => {
+                    if (op.insert === null || op.insert === undefined) {
+                        return { insert: "\n", ...(op.attributes ? { attributes: op.attributes } : {}) };
+                    }
+                    return op;
+                });
+
+                const lastOp = content[content.length - 1];
+                if (typeof lastOp.insert === 'string' && !lastOp.insert.endsWith('\n')) {
+                    content.push({ insert: "\n" });
+                }
+
+                console.log("[Load] Normalized =>",
+                    JSON.stringify(content, null, 2)
+                );
                 const ytext = data.document.getText("");
-                ytext.applyDelta(note.content);
+                ytext.applyDelta(content);
             }
 
         } catch (error) {
-            console.error("[load] error:", error.response?.data || error.message);
+            console.error("[load] error:", error.response?.data || error);
         }
     },
 
