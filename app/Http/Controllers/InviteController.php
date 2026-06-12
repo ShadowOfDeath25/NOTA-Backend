@@ -41,7 +41,7 @@ class InviteController extends Controller
         $invite = $this->inviteService->create($space, $request->user());
         return response()->json([
             'message' => 'Invite created successfully.',
-            'date' => new InviteResource($invite),
+            'data' => new InviteResource($invite),
         ], 201);
     }
 

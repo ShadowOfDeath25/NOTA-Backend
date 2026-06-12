@@ -90,21 +90,23 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::post('notes/{note}/favorites', [NoteController::class, 'addToFavorites'])->name("notes.favorites.add");
+    Route::delete('notes/{note}/favorites', [NoteController::class, 'deleteFromFavorites'])->name("notes.favorites.delete");
     Route::apiResource('notes', NoteController::class);
     Route::apiResource('spaces.notes', NoteController::class)->shallow();
     Route::apiResource('spaces', SpaceController::class);
     Route::post('spaces/{space}/invites', [InviteController::class, 'store']);
     Route::post('invites/{url}/accept', [InviteController::class, 'accept']);
+    Route::get("spaces/{space}/users", [SpaceController::class, "users"])->name("space.users");
     Route::put('spaces/{space}/users/{user}', [SpaceUserController::class, 'update']);
     Route::post('/summarize', [NoteController::class, 'summarizeText']);
-    Route::get('notes/{note}/summarize', [NoteController::class, 'summarize']);
+    Route::post('notes/{note}/summarize', [NoteController::class, 'summarize']);
     Route::post('/notes/read-pdf', [NoteController::class, 'fromPDF']);
 
     Route::get('fire-event', function (\Illuminate\Http\Request $request) {
-        NoteSummarized::dispatch($request->user()->id, Note::inRandomOrder()->first());
+        $note = Note::inRandomOrder()->first();
+        NoteSummarized::dispatch($request->user()->id, $note);
+        \App\Events\PDFExtracted::dispatch($request->user()->id, $note);
     });
-
-
 
 
     Route::post('spaces/{space}/invites', [InviteController::class, 'store'])

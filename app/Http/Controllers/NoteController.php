@@ -30,7 +30,7 @@ class NoteController extends Controller
             $q->where('user_id', $request->user()->id);
         }
         $notes = $q
-            ->latest()
+            ->orderByDesc('updated_at')
             ->get();
 
         return response()->json(['data' => $notes]);
@@ -167,6 +167,12 @@ class NoteController extends Controller
     {
         auth()->user()->favoriteNotes()->attach($note->id);
         return response()->json(["message" => 'Note added to favorites successfully']);
+    }
+
+    public function deleteFromFavorites(Request $request, Note $note)
+    {
+        auth()->user()->favoriteNotes()->detach($note->id);
+        return response()->json(["message" => 'Note removed from favorites successfully']);
     }
 
 }

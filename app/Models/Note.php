@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Note extends Model
 {
-    use HasUuids,SoftDeletes;
+    use HasUuids, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -23,6 +24,9 @@ class Note extends Model
     protected $casts = [
         'content' => 'array',
     ];
+    protected $appends = [
+        "is_favorite"
+    ];
 
     public function space(): BelongsTo
     {
@@ -32,5 +36,15 @@ class Note extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function isFavorite(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => FavoriteNote::where('user_id', auth()->user()->id)
+                ->where('note_id', $this->id)
+                ->exists()
+
+        );
     }
 }
