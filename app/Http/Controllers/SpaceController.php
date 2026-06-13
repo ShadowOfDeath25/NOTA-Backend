@@ -51,6 +51,7 @@ class SpaceController extends Controller
         }
 
         $space->loadCount('notes');
+        $space->loadCount("users");
 
         return response()->json(['data' => $space]);
     }
