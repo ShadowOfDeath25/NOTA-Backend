@@ -60,7 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/refresh-token', [AuthController::class, 'refreshToken']);
     Route::post('/auth/revoke-other-tokens', [AuthController::class, 'revokeOtherTokens']);
     Route::post('/auth/confirm-password', [AuthController::class, 'confirmPassword']);
-
+    Route::match(["put", "patch"], "/auth/change-password", [AuthController::class, 'changePassword']);
     Route::get('/user/confirmed-password-status', [ConfirmedPasswordStatusController::class, 'show']);
     Route::get('/user/confirm-password', [ConfirmablePasswordController::class, 'show']);
     Route::post('/user/confirm-password', [ConfirmablePasswordController::class, 'store']);
@@ -108,7 +108,7 @@ Route::middleware('auth:sanctum')->group(function () {
         \App\Events\PDFExtracted::dispatch($request->user()->id, $note);
     });
 
-
+    Route::post('spaces/{space}/leave', [SpaceUserController::class, "leave"]);
     Route::post('spaces/{space}/invites', [InviteController::class, 'store'])
         ->name('spaces.invites.store');
 

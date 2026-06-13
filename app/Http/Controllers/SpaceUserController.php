@@ -20,12 +20,12 @@ class SpaceUserController extends Controller
         $authUserRole = $space->userRole($authenticatedUser);
         $targetUserRole = $space->userRole($user);
 
-        if (! $targetUserRole) {
+        if (!$targetUserRole) {
             return response()->json(['message' => 'User not found in this space.'], 404);
         }
 
         // Only ADMIN and OWNER can change roles
-        if (! in_array($authUserRole, [Role::OWNER->value, Role::ADMIN->value])) {
+        if (!in_array($authUserRole, [Role::OWNER->value, Role::ADMIN->value])) {
             abort(403, 'Forbidden');
         }
 
@@ -39,5 +39,21 @@ class SpaceUserController extends Controller
         ]);
 
         return response()->json(['message' => 'User role updated successfully.']);
+    }
+
+    public function leave(Space $space)
+    {
+        $user = auth()->user();
+        $role = $space->userRole($user);
+        $space->users()->detach($user->id);
+        if (!$role == Role::OWNER->value) {
+            if ($space->users_count == 1) {
+                $space->delete();
+            } else {
+                $newOwner = $space->users()->orderBy("joined_at")->first();
+                $space->users()->updateExistingPivot($newOwner->id, ["role" => Role::OWNER->value]);
+            }
+        }
+
     }
 }
