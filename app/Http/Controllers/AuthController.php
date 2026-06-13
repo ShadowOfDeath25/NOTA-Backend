@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Helpers\ClientDetector;
 use App\Models\SpaceUser;
 use App\Services\AuthService;
+use Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -160,4 +163,33 @@ class AuthController extends Controller
             'recovery_codes' => $user->recoveryCodes(),
         ]);
     }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required'],
+            'password' => [
+                'required',
+                'confirmed',
+                Password::default(),
+            ],
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['The current password is incorrect.'],
+            ]);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json([
+            'message' => 'Password changed successfully.',
+        ]);
+    }
+
 }

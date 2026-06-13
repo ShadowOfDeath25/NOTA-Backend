@@ -90,4 +90,6 @@ class SpaceController extends Controller
         return response()->json(["data" => $space->users()->select(["name"])->get()]);
     }
 
+
+
 }
