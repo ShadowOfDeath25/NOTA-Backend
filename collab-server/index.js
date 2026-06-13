@@ -18,6 +18,39 @@ const parseHeaders = (requestHeaders) => {
     );
 };
 
+const normalizeDelta = (delta) => {
+    if (!Array.isArray(delta)) return delta;
+
+    let normalized = delta.map(op => {
+        if (op.insert === null || op.insert === undefined) {
+            return { insert: "\n", ...(op.attributes ? { attributes: op.attributes } : {}) };
+        }
+        return op;
+    });
+
+    normalized = normalized.filter(op => !(typeof op.insert === 'string' && op.insert === ''));
+
+    if (normalized.length > 0) {
+        const last = normalized[normalized.length - 1];
+        if (typeof last.insert === 'string' && !last.insert.endsWith('\n')) {
+            normalized.push({ insert: "\n" });
+        }
+    }
+
+    const merged = [];
+    for (const op of normalized) {
+        const prev = merged[merged.length - 1];
+        const prevKey = prev ? JSON.stringify(prev.attributes ?? null) : null;
+        const curKey = JSON.stringify(op.attributes ?? null);
+        if (prev && typeof prev.insert === 'string' && typeof op.insert === 'string' && prevKey === curKey) {
+            prev.insert += op.insert;
+        } else {
+            merged.push({ ...op });
+        }
+    }
+    return merged;
+};
+
 const getXsrfToken = (headers) => {
     try {
         const raw = headers.cookie || "";
@@ -34,10 +67,10 @@ const saveDocument = async (noteId, document, headers) => {
     if (nullInserts.length > 0) {
         console.log("[pre save] WARNING: null inserts in delta!", JSON.stringify(nullInserts, null, 2));
     }
-    console.log("[pre save] content =>", JSON.stringify(delta, null, 2));
+    const savedDelta = normalizeDelta(delta);
+    console.log("[pre save] content =>", JSON.stringify(savedDelta, null, 2));
 
-
-    const previewText = delta
+    const previewText = savedDelta
         ?.map(op => typeof op.insert === 'string' ? op.insert : '')
         .join('')
         .replace(/[\r\n]+/g, ' ')
@@ -52,7 +85,7 @@ const saveDocument = async (noteId, document, headers) => {
         const response = await axios.put(
             `${API_BASE_URL}/v1/notes/${noteId}`,
             {
-                content: delta,
+                content: savedDelta,
                 preview: previewText
             },
             {
@@ -110,23 +143,11 @@ const server = new Server({
             const note = response.data.data;
             console.log("[Load] content type:", typeof note.content, "isArray:", Array.isArray(note.content));
             if (Array.isArray(note.content) && note.content.length > 0) {
-                const nullInserts = note.content.filter(op => op.insert === null);
-                if (nullInserts.length > 0) {
-                    console.log("[Load] WARNING: null inserts found in loaded content!", JSON.stringify(nullInserts, null, 2));
-                }
+                const content = normalizeDelta(note.content);
 
-                const content = note.content.map(op => {
-                    if (op.insert === null || op.insert === undefined) {
-                        return { insert: "\n", ...(op.attributes ? { attributes: op.attributes } : {}) };
-                    }
-                    return op;
-                });
-
-                const lastOp = content[content.length - 1];
-                if (typeof lastOp.insert === 'string' && !lastOp.insert.endsWith('\n')) {
-                    content.push({ insert: "\n" });
-                }
-
+                console.log("[Load] Delta =>",
+                    JSON.stringify(note.content, null, 2)
+                );
                 console.log("[Load] Normalized =>",
                     JSON.stringify(content, null, 2)
                 );
